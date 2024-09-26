@@ -1,1 +1,1 @@
-web: python manage.py collectstatic && gunicorn vehiculos_project.wsgi
+web: python manage.py collectstatic --no-input && gunicorn vehiculos_project.wsgi:application
