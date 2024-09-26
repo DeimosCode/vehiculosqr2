@@ -2,7 +2,6 @@ import os
 import qrcode
 import io
 import base64
-from mega import Mega
 from django.shortcuts import render, redirect
 from .models import Vehiculo
 from django.conf import settings
