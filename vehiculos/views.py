@@ -67,25 +67,43 @@ def login_view(request):
             messages.error(request, 'Credenciales incorrectas.')
     return render(request, 'vehiculos/login.html')
 
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+
 def register_view(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
+        email = request.POST.get('email')  # Captura el correo electrónico
+        confirm_password = request.POST.get('confirm_password')  # Captura la confirmación de contraseña
 
         # Validar que los campos no estén vacíos
-        if not username or not password:
-            messages.error(request, 'Nombre de usuario y contraseña son obligatorios.')
+        if not username or not password or not email or not confirm_password:
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return render(request, 'vehiculos/register.html')
+
+        # Validar que las contraseñas coincidan
+        if password != confirm_password:
+            messages.error(request, 'Las contraseñas no coinciden.')
             return render(request, 'vehiculos/register.html')
 
         # Crear un nuevo usuario
         try:
-            User.objects.create_user(username=username, password=password)
-            messages.success(request, 'Usuario registrado exitosamente.')
+            # Verificar si el nombre de usuario ya existe
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'El nombre de usuario ya existe. Elige otro.')
+                return render(request, 'vehiculos/register.html')
+
+            # Crear el usuario
+            User.objects.create_user(username=username, password=password, email=email)
+            messages.success(request, 'Usuario registrado exitosamente. Puedes iniciar sesión ahora.')
             return redirect('login')
         except Exception as e:
             messages.error(request, 'Error al registrar el usuario. Asegúrate de que el nombre de usuario no exista.')
 
     return render(request, 'vehiculos/register.html')
+
 
 def home_view(request):
     return render(request, 'vehiculos/home.html')
