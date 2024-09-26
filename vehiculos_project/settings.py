@@ -34,6 +34,10 @@ ALLOWED_HOSTS = []
 
 LOGIN_URL = 'login'
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://vehiculosqr2-production.up.railway.app',
+]
+
 
 # Application definition
 
