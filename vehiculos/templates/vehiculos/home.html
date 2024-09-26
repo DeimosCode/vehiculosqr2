@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .menu-container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 2rem;
+        }
+        .menu-container a {
+            margin: 0.5rem;
+        }
+    </style>
+</head>
+
+
+<body>
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-info" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+    <div class="menu-container">
+        <h1>Bienvenido</h1>
+
+        <!-- Botones del menú -->
+        <a href="{% url 'registrar_vehiculo' %}" class="btn btn-primary btn-lg">Registrar Vehículo</a>
+        <a href="{% url 'consulta_vehiculo' %}" class="btn btn-secondary btn-lg">Consultar Vehículo</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-lg">Cerrar Sesión</a>
+    </div>
+
+    <!-- Bootstrap JS y Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

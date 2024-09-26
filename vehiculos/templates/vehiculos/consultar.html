@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+
+
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consultar Vehículo</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        #reader {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            border: 1px solid black;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .qr-container {
+            text-align: center;
+        }
+
+        .qr-container img {
+            margin-top: 20px;
+            max-width: 200px;
+        }
+
+        .btn-group {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+
+
+<body>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-info" role="alert">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="container">
+        <!-- Botones adicionales -->
+        <div class="btn-group">
+            <a href="{% url 'home' %}" class="btn btn-secondary">Inicio</a>
+            <a href="{% url 'logout' %}" class="btn btn-danger">Cerrar Sesión</a>
+        </div>
+
+        <h1 class="text-center">Consultar Vehículo</h1>
+
+        <!-- Formulario de consulta -->
+        <form id="codigo-form" method="post" class="mb-4">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="codigo-input" name="codigo" placeholder="Código" required />
+                <button class="btn btn-primary" type="submit">Consultar Vehículo</button>
+            </div>
+        </form>
+
+        <!-- Contenedor para escaneo de QR -->
+        <div class="qr-container">
+            <div id="reader"></div>
+            <button id="scan-btn" class="btn btn-success">Iniciar escaneo</button>
+            <p id="result" class="mt-3"></p>
+
+            {% if vehiculo %}
+            <div id="vehiculo-info" class="mt-4">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Año</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ vehiculo.marca }}</td>
+                            <td>{{ vehiculo.modelo }}</td>
+                            <td>{{ vehiculo.anio }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <img src="{{ codigo_qr }}" alt="Código QR" id="qr-image" />
+                <p id="vehiculo-code">Vehículo código: {{ vehiculo.codigo }}</p>
+                <button class="btn btn-info mt-2" onclick="printQRCode()">Imprimir QR</button>
+            </div>
+            {% elif error %}
+            <p class="text-danger">{{ error }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 y Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script de QR -->
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+
+    <script>
+        const html5QrCode = new Html5Qrcode("reader");
+        const scanBtn = document.getElementById('scan-btn');
+        const readerDiv = document.getElementById('reader');
+        const codigoInput = document.getElementById('codigo-input');
+        const resultPara = document.getElementById('result');
+        const vehiculoInfo = document.getElementById('vehiculo-info');
+        const qrImage = document.getElementById('qr-image');
+        const vehiculoCode = document.getElementById('vehiculo-code');
+
+        let isScanning = false;
+
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            codigoInput.value = decodedText;
+            stopScanning();
+            document.getElementById('codigo-form').submit();
+        };
+
+        const qrCodeErrorCallback = (errorMessage) => {
+            console.error("Error de escaneo:", errorMessage);
+        };
+
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        function startScanning() {
+            codigoInput.value = '';
+            resultPara.textContent = '';
+            if (vehiculoInfo) vehiculoInfo.style.display = 'none';
+            if (qrImage) qrImage.style.display = 'none';
+            if (vehiculoCode) vehiculoCode.style.display = 'none';
+
+            readerDiv.style.display = 'block';
+            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback, qrCodeErrorCallback)
+                .then(() => {
+                    isScanning = true;
+                    scanBtn.textContent = 'Escanear otro QR';
+                })
+                .catch(err => {
+                    console.error("Error al iniciar el escaneo:", err);
+                });
+        }
+
+        function stopScanning() {
+            html5QrCode.stop()
+                .then(() => {
+                    isScanning = false;
+                    readerDiv.style.display = 'none';
+                    scanBtn.textContent = 'Iniciar escaneo';
+                })
+                .catch(err => {
+                    console.error("Error al detener el escaneo:", err);
+                });
+        }
+
+        function printQRCode() {
+            const qrImageSrc = qrImage.src;
+            const vehiculoCodigo = vehiculoCode.textContent;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Imprimir QR</title>
+                    </head>
+                    <body>
+                        <h1>Información del Vehículo</h1>
+                        <p>${vehiculoCodigo}</p>
+                        <img src="${qrImageSrc}" style="max-width: 100%;" />
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        scanBtn.addEventListener('click', () => {
+            if (isScanning) {
+                stopScanning();
+            } else {
+                startScanning();
+            }
+        });
+    </script>
+</body>
+
+</html>

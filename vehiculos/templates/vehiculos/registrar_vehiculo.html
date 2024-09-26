@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrar Vehículo</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f8f9fa;
+        position: relative;
+      }
+      .form-container {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+      }
+      .btn-group {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    {% if messages %} {% for message in messages %}
+    <div class="alert alert-info" role="alert">{{ message }}</div>
+    {% endfor %} {% endif %}
+
+    <!-- Botones de navegación -->
+    <div class="btn-group">
+      <a href="{% url 'home' %}" class="btn btn-secondary">Inicio</a>
+      <a href="{% url 'logout' %}" class="btn btn-danger">Cerrar Sesión</a>
+    </div>
+
+    <div class="form-container">
+      <h2 class="text-center mb-4">Registrar Vehículo</h2>
+
+      <!-- Formulario de registro -->
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="codigo"
+            name="codigo"
+            placeholder="Código"
+            required
+          />
+          <label for="codigo">Código</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="marca"
+            name="marca"
+            placeholder="Marca"
+            required
+          />
+          <label for="marca">Marca</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="modelo"
+            name="modelo"
+            placeholder="Modelo"
+            required
+          />
+          <label for="modelo">Modelo</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            type="number"
+            class="form-control"
+            id="anio"
+            name="anio"
+            placeholder="Año"
+            required
+          />
+          <label for="anio">Año</label>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary btn-lg">
+            Registrar Vehículo
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Bootstrap JS y Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
