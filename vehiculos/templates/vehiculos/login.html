@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 
@@ -7,17 +8,17 @@
     <title>Iniciar Sesión</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Tu archivo CSS de la animación de lluvia -->
+    <link href="{% static 'vehiculos/css/style.css' %}" rel="stylesheet" />
+
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fa;
-        }
+        
 
         .login-container {
-            background-color: white;
+            position: absolute;
+            z-index: 1;
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
@@ -27,22 +28,175 @@
             display: block;
             margin: 0 auto 1rem;
             width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         .spinner-border {
             display: none;
         }
+
+        
+
+        /* Alertas en la esquina superior */
+        .alert {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 2;
+            /* Asegura que esté encima de otros elementos */
+        }
     </style>
 </head>
 
 <body>
-    {% if messages %} {% for message in messages %}
-    <div class="alert alert-info" role="alert">{{ message }}</div>
-    {% endfor %} {% endif %}
+    <div class="container2">
+        <div class="rain">
+            <div class="drop"></div>
+            <div class="waves">
+                <div></div>
+                <div></div>
+            </div>
+            <div class="splash"></div>
+            <div class="particles">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="rain">
+            <div class="drop"></div>
+            <div class="waves">
+                <div></div>
+                <div></div>
+            </div>
+            <div class="splash"></div>
+            <div class="particles">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="rain">
+            <div class="drop"></div>
+            <div class="waves">
+                <div></div>
+                <div></div>
+            </div>
+            <div class="splash"></div>
+            <div class="particles">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="rain">
+            <div class="drop"></div>
+            <div class="waves">
+                <div></div>
+                <div></div>
+            </div>
+            <div class="splash"></div>
+            <div class="particles">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="rain">
+            <div class="drop"></div>
+            <div class="waves">
+                <div></div>
+                <div></div>
+            </div>
+            <div class="splash"></div>
+            <div class="particles">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="rain">
+            <div class="drop"></div>
+            <div class="waves">
+                <div></div>
+                <div></div>
+            </div>
+            <div class="splash"></div>
+            <div class="particles">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="rain">
+            <div class="drop"></div>
+            <div class="waves">
+                <div></div>
+                <div></div>
+            </div>
+            <div class="splash"></div>
+            <div class="particles">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="rain">
+            <div class="drop"></div>
+            <div class="waves">
+                <div></div>
+                <div></div>
+            </div>
+            <div class="splash"></div>
+            <div class="particles">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="rain">
+            <div class="drop"></div>
+            <div class="waves">
+                <div></div>
+                <div></div>
+            </div>
+            <div class="splash"></div>
+            <div class="particles">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" role="alert" id="alert">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
 
     <div class="login-container text-center">
         <!-- Logo -->
-        <img src="logo.png" alt="Logo Mecánico" class="logo" />
+        <img src="{% static 'vehiculos/img/iconmec.jpg' %}" alt="Logo Mecánico" class="logo" />
 
         <h2 class="mb-4">Iniciar Sesión</h2>
 
@@ -80,6 +234,10 @@
         </div>
     </div>
 
+
+
+
+
     <!-- Bootstrap JS y Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -88,6 +246,16 @@
         function mostrarSpinner() {
             document.getElementById("spinner").style.display = "inline-block";
         }
+
+        // Script para ocultar la alerta después de 5 segundos
+        window.onload = function () {
+            const alert = document.getElementById("alert");
+            if (alert) {
+                setTimeout(() => {
+                    alert.style.display = "none";
+                }, 5000); // Tiempo en milisegundos (5000 ms = 5 segundos)
+            }
+        };
     </script>
 </body>
 

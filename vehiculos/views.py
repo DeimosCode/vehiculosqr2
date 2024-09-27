@@ -44,6 +44,9 @@ def consultar_vehiculo(request):
             qr_image_str = base64.b64encode(buffered.getvalue()).decode()
             codigo_qr = f"data:image/png;base64,{qr_image_str}"
 
+            # Mensaje de éxito al encontrar el vehículo
+            messages.success(request, 'Vehículo encontrado exitosamente.')
+
             return render(request, 'vehiculos/consultar.html', {
                 'vehiculo': vehiculo,
                 'codigo_qr': codigo_qr,
@@ -52,6 +55,7 @@ def consultar_vehiculo(request):
         except Vehiculo.DoesNotExist:
             messages.error(request, 'Vehículo no encontrado.')
             return render(request, 'vehiculos/consultar.html', {'MEDIA_URL': settings.MEDIA_URL})
+
     return render(request, 'vehiculos/consultar.html', {'MEDIA_URL': settings.MEDIA_URL})
 
 def login_view(request):
@@ -65,6 +69,7 @@ def login_view(request):
             return redirect('home')
         else:
             messages.error(request, 'Credenciales incorrectas.')
+    
     return render(request, 'vehiculos/login.html')
 
 from django.contrib import messages

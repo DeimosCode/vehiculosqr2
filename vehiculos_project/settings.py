@@ -143,6 +143,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'vehiculos/static',  # Ruta al directorio donde están tus archivos estáticos
+]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -153,4 +156,16 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-ALLOWED_HOSTS = ['localhost','vehiculosqr2-production.up.railway.app']
+ALLOWED_HOSTS = ['*','vehiculosqr2-production.up.railway.app']
+
+
+
+# settings.py
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'alert alert-danger',  # Para mensajes de error
+    messages.SUCCESS: 'alert alert-success',  # Para mensajes de éxito
+    messages.INFO: 'alert alert-info',  # Para mensajes de información
+    messages.WARNING: 'alert alert-warning',  # Para mensajes de advertencia
+}

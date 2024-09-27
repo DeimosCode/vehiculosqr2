@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 
@@ -9,6 +10,10 @@
     <title>Consultar Vehículo</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Tu archivo CSS de la animación de lluvia -->
+    <link href="{% static 'vehiculos/css/style.css' %}" rel="stylesheet" />
     <style>
         #reader {
             width: 100%;
@@ -19,23 +24,325 @@
             display: none;
         }
 
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: black;
+        }
+
         .container {
-            margin-top: 50px;
+            margin: 70px 20px 20px 20px; /* Margen superior por defecto */
+            padding: 50px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 98%;
+            min-height: 90vh;
+        }
+        
+     
+        
+
+        h1 {
+            margin-bottom: 2rem;
+            color: #0b1011;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .button {
+            --offset: 10px;
+            --border-size: 2px;
+            display: block;
+            position: relative;
+            padding: 1em 2em;
+            border: 0;
+            background: transparent;
+            color: #0b1011;
+            text-transform: uppercase;
+            letter-spacing: .25em;
+            outline: none;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 0;
+            box-shadow: inset 0 0 0 var(--border-size) currentcolor;
+            transition: background .8s ease;
+            margin: 0 1em;
+            /* Espaciado horizontal entre botones */
+            text-decoration: none;
+            /* Sin subrayado */
+        }
+
+        .button:hover {
+            background: rgba(100, 0, 0, 0.03);
+        }
+
+        .button__horizontal,
+        .button__vertical {
+            position: absolute;
+            top: var(--horizontal-offset, 0);
+            right: var(--vertical-offset, 0);
+            bottom: var(--horizontal-offset, 0);
+            left: var(--vertical-offset, 0);
+            transition: transform .8s ease;
+            will-change: transform;
+        }
+
+        .button__horizontal {
+            --vertical-offset: calc(var(--offset) * -1);
+            border-top: var(--border-size) solid currentcolor;
+            border-bottom: var(--border-size) solid currentcolor;
+        }
+
+        .button:hover .button__horizontal {
+            transform: scaleX(0);
+        }
+
+        .button__vertical {
+            --horizontal-offset: calc(var(--offset) * -1);
+            border-left: var(--border-size) solid currentcolor;
+            border-right: var(--border-size) solid currentcolor;
+        }
+
+        .button:hover .button__vertical {
+            transform: scaleY(0);
+        }
+
+        .alert {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
+        }
+
+        .info-section {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .panel {
+            box-sizing: border-box;
+            width: 300px;
+            height: 160px;
+            margin: 10px;
+            font-size: 32px;
+            font-weight: 600;
+            color: #fff;
+            overflow: hidden;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .panel a {
+            display: block;
+            padding: 12px 25px;
+            color: #fff;
+            text-decoration: none;
+            z-index: 2;
+        }
+
+        .panel a span {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 48px;
+        }
+
+        .panel:after {
+            position: absolute;
+            font-family: FontAwesome;
+            color: rgba(0, 0, 0, 1);
+            z-index: 1;
+            transition: all .5s;
+        }
+
+        .panel.post {
+            background-color: #b8aa0e;
+        }
+
+        .panel.post:after {
+            content: "\f08d";
+            font-size: 120px;
+            color: rgba(0, 0, 0, 0.3);
+            top: 25px;
+            right: 30px;
+            transform: rotate(45deg);
+        }
+
+        .panel.comment {
+            background-color: #0377c0;
+        }
+
+        .panel.comment:after {
+            content: "\f075";
+            font-size: 120px;
+            color: rgba(0, 0, 0, 0.3);
+            top: 25px;
+            right: 30px;
+        }
+
+        .panel.page {
+            background-color: #279824;
+        }
+
+        .panel.page:after {
+            content: "\f15c";
+            font-size: 120px;
+            color: rgba(0, 0, 0, 0.3);
+            top: 25px;
+            right: 30px;
+        }
+
+        .panel.user {
+            background-color: #fc1c3e;
+        }
+
+        .panel.user:after {
+            content: "\f007";
+            font-size: 120px;
+            color: rgba(0, 0, 0, 0.3);
+            top: 25px;
+            right: 30px;
+        }
+
+        .panel:hover {
+            transform: scale(1.05);
+        }
+
+        .panel:hover:after {
+            color: rgba(0, 0, 0, 0.5);
         }
 
         .qr-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .qr-info {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .qr-code {
+            flex: 1;
             text-align: center;
         }
 
-        .qr-container img {
-            margin-top: 20px;
-            max-width: 200px;
+        .btn-print {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-print:hover {
+            background-color: #0056b3;
+            border-color: #004085;
         }
 
         .btn-group {
             position: absolute;
             top: 20px;
             right: 20px;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: rgb(2, 2, 2);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .table-custom {
+            border-collapse: separate;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid transparent;
+        }
+
+        .table-custom th,
+        .table-custom td {
+            border: 1px solid #17a2b8;
+        }
+
+        .table-custom th {
+            background-color: rgba(52, 58, 64, 0.8);
+            color: white;
+            text-align: center;
+        }
+
+        .table-custom tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        /* Media Queries para Responsividad */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                min-height: auto;
+                margin: 20px;
+            }
+
+            .panel {
+                width: 100%;
+                height: auto;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .qr-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .qr-info,
+            .qr-code {
+                margin-right: 0;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 40px;
+                margin: 10px;
+                margin-top: 70%;
+            }
+
+            .button {
+                padding: 0.5em 1em;
+                margin: 0.5em;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .panel a span {
+                font-size: 36px;
+            }
         }
     </style>
 </head>
@@ -44,61 +351,92 @@
 <body>
     {% if messages %}
     {% for message in messages %}
-    <div class="alert alert-info" role="alert">{{ message }}</div>
+    <div class="alert alert-{{ message.tags }}" role="alert" id="alert">{{ message }}</div>
     {% endfor %}
     {% endif %}
-
+    <div class="btn-group mb-3">
+        <a href="{% url 'home' %}" class="btn btn-secondary">Inicio</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger">Cerrar Sesión</a>
+    </div>
     <div class="container">
-        <!-- Botones adicionales -->
-        <div class="btn-group">
-            <a href="{% url 'home' %}" class="btn btn-secondary">Inicio</a>
-            <a href="{% url 'logout' %}" class="btn btn-danger">Cerrar Sesión</a>
+        <div class="d-flex  mb-3">
+            <button id="scan-btn" class="button btn-success">
+                <i class="fas fa-camera"></i> Iniciar escaneo
+                <span class="button__horizontal"></span>
+                <span class="button__vertical"></span>
+            </button>
         </div>
 
-        <h1 class="text-center">Consultar Vehículo</h1>
+        <h1 class="text-center mb-4">Consultar Vehículo</h1>
 
-        <!-- Formulario de consulta -->
         <form id="codigo-form" method="post" class="mb-4">
             {% csrf_token %}
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" id="codigo-input" name="codigo" placeholder="Código" required />
-                <button class="btn btn-primary" type="submit">Consultar Vehículo</button>
+            <div class="row g-2">
+                <div class="col-12 col-md-8">
+                    <input type="text" class="form-control" id="codigo-input" name="codigo" placeholder="Código"
+                        required />
+                </div>
+                <div class="col-12 col-md-4">
+                    <button class="button btn-primary" style="background-color: #85c51e;" type="submit">
+                        Consultar Vehículo
+                        <span class="button__horizontal"></span>
+                        <span class="button__vertical"></span>
+                    </button>
+                </div>
             </div>
         </form>
 
-        <!-- Contenedor para escaneo de QR -->
-        <div class="qr-container">
-            <div id="reader"></div>
-            <button id="scan-btn" class="btn btn-success">Iniciar escaneo</button>
-            <p id="result" class="mt-3"></p>
 
-            {% if vehiculo %}
-            <div id="vehiculo-info" class="mt-4">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Marca</th>
-                            <th>Modelo</th>
-                            <th>Año</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ vehiculo.marca }}</td>
-                            <td>{{ vehiculo.modelo }}</td>
-                            <td>{{ vehiculo.anio }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <img src="{{ codigo_qr }}" alt="Código QR" id="qr-image" />
-                <p id="vehiculo-code">Vehículo código: {{ vehiculo.codigo }}</p>
-                <button class="btn btn-info mt-2" onclick="printQRCode()">Imprimir QR</button>
+        <div class="row">
+            <div class="col-md-8 mb-4">
+                <!-- Información del vehículo -->
+                {% if vehiculo %}
+                <div id="vehiculo-info" class="mt-4">
+                    <table class="table table-bordered table-custom">
+                        <thead>
+                            <tr>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Año</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ vehiculo.marca }}</td>
+                                <td>{{ vehiculo.modelo }}</td>
+                                <td>{{ vehiculo.anio }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% elif error %}
+                <p class="text-danger">{{ error }}</p>
+                {% endif %}
             </div>
-            {% elif error %}
-            <p class="text-danger">{{ error }}</p>
-            {% endif %}
+            <div class="col-md-4 text-center mb-4">
+                <!-- Código QR -->
+                {% if vehiculo %}
+                <img src="{{ codigo_qr }}" alt="Código QR" id="qr-image" class="img-fluid mb-2" />
+                <p id="vehiculo-code">Vehículo código: {{ vehiculo.codigo }}</p>
+
+                <div class="d-flex justify-content-center">
+                    <button class="button btn-info" style="background-color: #1e9ec5;" onclick="printQRCode()">
+                        <i class="fas fa-print"></i> Imprimir QR
+                        <span class="button__horizontal"></span>
+                        <span class="button__vertical"></span>
+                    </button>
+                </div>
+
+                {% endif %}
+            </div>
+
         </div>
+
+        <p id="result" class="mt-3"></p>
+        <div id="reader" class="mt-4"></div>
     </div>
+
+
 
     <!-- Bootstrap 5 y Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -184,6 +522,22 @@
                 stopScanning();
             } else {
                 startScanning();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const alert = document.getElementById("alert");
+            if (alert) {
+                setTimeout(() => {
+                    // Agrega una clase para el efecto de desvanecimiento
+                    alert.style.transition = "opacity 0.5s ease-out"; // Transición suave
+                    alert.style.opacity = "0"; // Desvanece el alert
+                    
+                    // Oculta el elemento después de la transición
+                    setTimeout(() => {
+                        alert.style.display = "none";
+                    }, 500); // Tiempo de espera para que se complete la transición
+                }, 5000); // Tiempo en milisegundos (5000 ms = 5 segundos)
             }
         });
     </script>
