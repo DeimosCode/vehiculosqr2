@@ -276,6 +276,8 @@
             cursor: pointer;
             border-radius: 6px;
             transition: transform 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
         }
 
         .observacion-img:hover {
@@ -357,6 +359,37 @@
             border: none;
             font-size: 1.5rem;
             color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* Estilos para vista previa de imágenes */
+        .img-preview-container {
+            position: relative;
+            width: 100px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .img-preview {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
+        
+        .delete-img-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
             cursor: pointer;
         }
 
@@ -491,9 +524,6 @@
     {% endfor %}
     {% endif %}
 
-    <br>
-    <br>
-    <br>
     <!-- Contenido principal -->
     <div class="dashboard-container">
         {% if vehiculo %}
@@ -533,7 +563,7 @@
         </form>
 
         <div id="reader" style="display: none;"></div>
-        <br>
+
         {% if vehiculo %}
         <button class="btn btn-warning mb-4" data-bs-toggle="modal" data-bs-target="#modalObservacion">
             <i class="fas fa-plus-circle"></i> Agregar Observación
@@ -554,22 +584,47 @@
                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required></textarea>
                             </div>
                             <div class="mb-3">
-                                <!-- Botón para abrir cámara -->
-                                <button type="button" class="btn btn-info mb-3" id="btnTomarFoto">
-                                    <i class="fas fa-camera-retro"></i> Tomar Foto
-                                </button>
+                                <!-- Selector de cámara -->
+                                <div class="btn-group mb-3" role="group">
+                                    <button type="button" class="btn btn-info" id="btnTomarFoto" data-camera="environment">
+                                        <i class="fas fa-camera-retro"></i> Cámara Trasera
+                                    </button>
+                                    <button type="button" class="btn btn-info" id="btnTomarFotoFrontal" data-camera="user">
+                                        <i class="fas fa-user"></i> Cámara Frontal
+                                    </button>
+                                </div>
 
                                 <!-- Video para mostrar cámara -->
-                                <video id="video" width="320" height="240" autoplay style="display:none; border-radius: 8px; margin-bottom:10px;"></video>
+                                <video id="video" width="100%" height="auto" autoplay 
+                                       style="display:none; border-radius: 8px; margin-bottom:10px;"></video>
+                                
+                                <!-- Botón para capturar -->
+                                <button type="button" class="btn btn-success mb-3" id="btnCapturar" style="display:none;">
+                                    <i class="fas fa-camera"></i> Capturar Foto
+                                </button>
 
                                 <!-- Canvas para capturar foto -->
-                                <canvas id="canvas" width="1920" height="1080" style="display:none;"></canvas>
+                                <canvas id="canvas" style="display:none;"></canvas>
+                                
+                                <!-- Vista previa -->
+                                <div id="fotoPreview" class="mb-3" style="display:none;">
+                                    <img id="previewImage" src="#" alt="Vista previa" style="max-width:100%; border-radius:8px;">
+                                    <button type="button" class="btn btn-danger mt-2" id="btnEliminarFoto">
+                                        <i class="fas fa-trash"></i> Eliminar Foto
+                                    </button>
+                                </div>
 
                                 <!-- Input oculto para imagen tomada en base64 -->
                                 <input type="hidden" id="fotoBase64" name="fotoBase64" />
-
+                                
                                 <!-- Input para subir archivos múltiples -->
-                                <input class="form-control" type="file" id="imagen" name="imagenes_base64" accept="image/*" multiple>
+                                <div class="mb-3">
+                                    <label class="form-label">O seleccione imágenes de su galería:</label>
+                                    <input class="form-control" type="file" id="imagen" name="imagenes" accept="image/*" multiple>
+                                </div>
+                                
+                                <!-- Vista previa de imágenes seleccionadas -->
+                                <div id="galeriaPreview" class="d-flex flex-wrap gap-2 mt-3"></div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -604,13 +659,17 @@
                 <small class="text-muted">{{ obs.fecha|date:"d/m/Y H:i" }} - {{ obs.creado_por }}</small>
                 <p class="mt-2">{{ obs.descripcion }}</p>
 
-                {% if obs.get_image_data %}
-                <img src="{{ obs.get_image_data }}" alt="Imagen observación" class="observacion-img" onclick="openImageModal('{{ obs.get_image_data }}')">
-                {% endif %}
-
-                {% for img in obs.imagenes.all %}
-                <img src="{{ img.get_image_data }}" alt="Imagen observación" class="observacion-img" onclick="openImageModal('{{ img.get_image_data }}')">
-                {% endfor %}
+                <div class="d-flex flex-wrap">
+                    {% if obs.imagen_base64 %}
+                    <img src="data:image/jpeg;base64,{{ obs.imagen_base64 }}" alt="Imagen observación" 
+                         class="observacion-img" onclick="openImageModal('data:image/jpeg;base64,{{ obs.imagen_base64 }}')">
+                    {% endif %}
+                    
+                    {% for img_data in obs.get_imagenes_base64 %}
+                    <img src="data:image/jpeg;base64,{{ img_data }}" alt="Imagen observación" 
+                         class="observacion-img" onclick="openImageModal('data:image/jpeg;base64,{{ img_data }}')">
+                    {% endfor %}
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -633,6 +692,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
+        // Configuración del escáner QR
         const html5QrCode = new Html5Qrcode("reader");
         const scanBtn = document.getElementById('scan-btn');
         const readerDiv = document.getElementById('reader');
@@ -692,36 +752,195 @@
             win.print();
         }
 
-        const btnTomarFoto = document.getElementById('btnTomarFoto');
+        // Configuración de la cámara y manejo de imágenes
+        let stream = null;
+        let currentCamera = 'environment'; // Por defecto cámara trasera
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const fotoBase64 = document.getElementById('fotoBase64');
+        const btnTomarFoto = document.getElementById('btnTomarFoto');
+        const btnTomarFotoFrontal = document.getElementById('btnTomarFotoFrontal');
+        const btnCapturar = document.getElementById('btnCapturar');
+        const fotoPreview = document.getElementById('fotoPreview');
+        const previewImage = document.getElementById('previewImage');
+        const btnEliminarFoto = document.getElementById('btnEliminarFoto');
+        const galeriaPreview = document.getElementById('galeriaPreview');
+        const inputImagen = document.getElementById('imagen');
 
-        let stream;
+        // Configurar canvas con dimensiones adecuadas
+        canvas.width = 1280;
+        canvas.height = 720;
 
-        btnTomarFoto.addEventListener('click', async () => {
-            if (video.style.display === 'none') {
-                // Abrir cámara
-                video.style.display = 'block';
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    video.srcObject = stream;
-                    btnTomarFoto.textContent = 'Capturar Foto';
-                } catch (err) {
-                    alert('No se pudo acceder a la cámara');
+        // Manejar selección de cámara
+        btnTomarFoto.addEventListener('click', () => {
+            currentCamera = 'environment';
+            iniciarCamara();
+        });
+
+        btnTomarFotoFrontal.addEventListener('click', () => {
+            currentCamera = 'user';
+            iniciarCamara();
+        });
+
+        // Función para iniciar la cámara
+        async function iniciarCamara() {
+            try {
+                // Detener cualquier transmisión anterior
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
                 }
-            } else {
-                // Capturar foto
-                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-                const dataURL = canvas.toDataURL('image/jpeg');
-                fotoBase64.value = dataURL; // Guarda base64 en input oculto para enviar al backend
 
-                alert('Foto capturada y lista para guardar');
+                // Iniciar nueva transmisión
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: currentCamera,
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                });
 
-                // Detener cámara
+                video.srcObject = stream;
+                video.style.display = 'block';
+                btnCapturar.style.display = 'block';
+                fotoPreview.style.display = 'none';
+
+                // Ocultar botones de cámara y mostrar el de captura
+                btnTomarFoto.style.display = 'none';
+                btnTomarFotoFrontal.style.display = 'none';
+
+            } catch (err) {
+                console.error("Error al acceder a la cámara:", err);
+                alert('No se pudo acceder a la cámara. Asegúrese de haber dado los permisos necesarios.');
+            }
+        }
+
+        // Capturar foto
+        btnCapturar.addEventListener('click', () => {
+            // Ajustar canvas al tamaño del video
+            const videoWidth = video.videoWidth;
+            const videoHeight = video.videoHeight;
+            canvas.width = videoWidth;
+            canvas.height = videoHeight;
+            
+            // Dibujar la imagen en el canvas
+            canvas.getContext('2d').drawImage(video, 0, 0, videoWidth, videoHeight);
+            
+            // Obtener la imagen en base64
+            const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+            fotoBase64.value = dataURL;
+            
+            // Mostrar vista previa
+            previewImage.src = dataURL;
+            fotoPreview.style.display = 'block';
+            btnCapturar.style.display = 'none';
+            
+            // Detener la cámara
+            if (stream) {
                 stream.getTracks().forEach(track => track.stop());
                 video.style.display = 'none';
-                btnTomarFoto.textContent = 'Tomar Foto';
+            }
+            
+            // Mostrar botones de cámara nuevamente
+            btnTomarFoto.style.display = 'block';
+            btnTomarFotoFrontal.style.display = 'block';
+        });
+
+        // Eliminar foto capturada
+        btnEliminarFoto.addEventListener('click', () => {
+            fotoBase64.value = '';
+            fotoPreview.style.display = 'none';
+            previewImage.src = '#';
+        });
+
+        // Manejar selección de imágenes de galería
+        inputImagen.addEventListener('change', function(e) {
+            galeriaPreview.innerHTML = '';
+            
+            if (this.files && this.files.length > 0) {
+                for (let i = 0; i < this.files.length; i++) {
+                    const file = this.files[i];
+                    
+                    if (!file.type.match('image.*')) {
+                        continue; // Saltar si no es una imagen
+                    }
+                    
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        // Crear elemento de vista previa
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'img-preview-container';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'img-preview';
+                        
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'delete-img-btn';
+                        deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        deleteBtn.onclick = function() {
+                            previewDiv.remove();
+                            // Crear un nuevo DataTransfer para actualizar los archivos
+                            const newFiles = new DataTransfer();
+                            for (let j = 0; j < inputImagen.files.length; j++) {
+                                if (j !== i) {
+                                    newFiles.items.add(inputImagen.files[j]);
+                                }
+                            }
+                            inputImagen.files = newFiles.files;
+                        };
+                        
+                        previewDiv.appendChild(img);
+                        previewDiv.appendChild(deleteBtn);
+                        galeriaPreview.appendChild(previewDiv);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+
+        // Convertir imágenes seleccionadas a base64 antes de enviar el formulario
+        document.querySelector('#modalObservacion form').addEventListener('submit', function(e) {
+            // Si hay imágenes seleccionadas, convertirlas a base64
+            if (inputImagen.files && inputImagen.files.length > 0) {
+                e.preventDefault();
+                
+                const promises = [];
+                const base64Images = [];
+                
+                for (let i = 0; i < inputImagen.files.length; i++) {
+                    const file = inputImagen.files[i];
+                    
+                    if (file.type.match('image.*')) {
+                        const promise = new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                // Obtener solo la parte base64 (sin el prefijo data:image/...)
+                                const base64String = e.target.result.split(',')[1];
+                                base64Images.push(base64String);
+                                resolve();
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                        
+                        promises.push(promise);
+                    }
+                }
+                
+                // Esperar a que todas las imágenes se conviertan
+                Promise.all(promises).then(() => {
+                    // Crear un input oculto con todas las imágenes en base64
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'imagenes_base64';
+                    hiddenInput.value = JSON.stringify(base64Images);
+                    this.appendChild(hiddenInput);
+                    
+                    // Enviar el formulario
+                    this.submit();
+                });
             }
         });
 
