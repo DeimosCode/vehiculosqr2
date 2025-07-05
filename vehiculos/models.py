@@ -1,6 +1,16 @@
 from django.db import models
 from django.utils import timezone
 
+from django.db import models
+from django.utils import timezone
+import json
+from django.core.exceptions import ValidationError
+
+from django.db import models
+from django.utils import timezone
+import json
+from django.core.exceptions import ValidationError
+
 class Vehiculo(models.Model):
     codigo = models.CharField(max_length=100, unique=True)
     marca = models.CharField(max_length=50)
@@ -9,6 +19,11 @@ class Vehiculo(models.Model):
 
     def __str__(self):
         return f"{self.marca} {self.modelo} ({self.anio})"
+
+    class Meta:
+        verbose_name = "Vehículo"
+        verbose_name_plural = "Vehículos"
+        ordering = ['marca', 'modelo']
 
 class ObservacionVehiculo(models.Model):
     vehiculo = models.ForeignKey(
@@ -29,6 +44,11 @@ class ObservacionVehiculo(models.Model):
         null=True,
         verbose_name='Imagen en Base64'
     )
+    imagenes_base64 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name='Imágenes adicionales en Base64 (JSON)'
+    )
     creado_por = models.CharField(
         max_length=100,
         blank=True,
@@ -44,17 +64,39 @@ class ObservacionVehiculo(models.Model):
     def __str__(self):
         return f"Obs. {self.id} - {self.vehiculo} ({self.fecha.strftime('%d/%m/%Y')})"
 
-    def save_image_from_base64(self, base64_string):
-        if base64_string.startswith('data:image'):
-            header, base64_data = base64_string.split(';base64,')
-            self.imagen_base64 = base64_data
-        else:
-            self.imagen_base64 = base64_string
+    def clean(self):
+        """Validación opcional para imágenes"""
+        pass  # Eliminamos la validación obligatoria de imágenes
 
-    def get_image_data(self):
+    def get_imagen_data(self):
+        """Devuelve la imagen principal como data URI"""
         if self.imagen_base64:
             return f"data:image/jpeg;base64,{self.imagen_base64}"
         return None
+
+    def get_imagenes_base64(self):
+        """Devuelve una lista de imágenes adicionales en base64"""
+        if self.imagenes_base64:
+            try:
+                return json.loads(self.imagenes_base64)
+            except json.JSONDecodeError:
+                return []
+        return []
+
+    def add_imagen(self, base64_string):
+        """Añade una imagen a la lista de imágenes adicionales"""
+        if base64_string.startswith('data:image'):
+            base64_string = base64_string.split(',')[1]
+        
+        imagenes = self.get_imagenes_base64()
+        imagenes.append(base64_string)
+        self.imagenes_base64 = json.dumps(imagenes)
+        self.save()
+
+    def save(self, *args, **kwargs):
+        """Validación antes de guardar"""
+        self.clean()
+        super().save(*args, **kwargs)
 
 class ImagenObservacion(models.Model):
     observacion = models.ForeignKey(

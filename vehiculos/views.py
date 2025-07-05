@@ -39,31 +39,36 @@ def registrar_vehiculo(request):
 def consultar_vehiculo(request):
     codigo_qr = None
     vehiculo = None
-    codigo = None
-
-    if request.method == "POST":
-        codigo = request.POST.get('codigo')
-    else:
-        codigo = request.GET.get('codigo')
+    codigo = request.POST.get('codigo') or request.GET.get('codigo')
 
     if codigo:
         try:
             vehiculo = Vehiculo.objects.get(codigo=codigo)
 
-            # Generar el código QR en memoria
-            qr_image = qrcode.make(codigo)
+            # Generar el código QR
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(codigo)
+            qr.make(fit=True)
+            
+            img = qr.make_image(fill_color="black", back_color="white")
             buffered = io.BytesIO()
-            qr_image.save(buffered, format="PNG")
-            qr_image_str = base64.b64encode(buffered.getvalue()).decode()
-            codigo_qr = f"data:image/png;base64,{qr_image_str}"
+            img.save(buffered, format="PNG")
+            codigo_qr = base64.b64encode(buffered.getvalue()).decode()
 
             messages.success(request, 'Vehículo encontrado exitosamente.')
         except Vehiculo.DoesNotExist:
-            messages.error(request, 'Vehículo no encontrado.')
+            messages.error(request, f'Vehículo con código {codigo} no encontrado.')
+            codigo = None  # Limpiar el código si no existe
 
     return render(request, 'vehiculos/consultar.html', {
         'vehiculo': vehiculo,
-        'codigo_qr': codigo_qr,
+        'codigo_qr': f"data:image/png;base64,{codigo_qr}" if codigo_qr else None,
+        'codigo_actual': codigo,  # Pasar el código actual a la plantilla
         'MEDIA_URL': settings.MEDIA_URL
     })
 
@@ -124,44 +129,57 @@ def logout_view(request):
     messages.success(request, 'Has cerrado sesión exitosamente.')
     return redirect('login')
 
+import json
 
-def registrar_observacion(request, codigo):
-    if request.method == "POST":
-        vehiculo = get_object_or_404(Vehiculo, codigo=codigo)
-        descripcion = request.POST.get('descripcion')
-        creado_por = request.user.username if request.user.is_authenticated else "Sistema"
+# vehiculos/views.py
 
-        observacion = ObservacionVehiculo.objects.create(
-            vehiculo=vehiculo,
-            descripcion=descripcion,
-            creado_por=creado_por
-        )
-
-        # Imagen de la cámara (opcional)
-        foto_base64 = request.POST.get('fotoBase64')
-        if foto_base64:
-            observacion.save_image_from_base64(foto_base64)
+def registrar_observacion(request, codigo_vehiculo):
+    if request.method == 'POST':
+        try:
+            vehiculo = get_object_or_404(Vehiculo, codigo=codigo_vehiculo)
+            
+            descripcion = request.POST.get('descripcion', '').strip()
+            imagen_base64 = request.POST.get('fotoBase64', '')
+            imagenes_base64 = request.POST.get('imagenes_base64', '[]')
+            
+            # Validación de la descripción
+            if len(descripcion) < 1:
+                messages.error(request, 'La descripción debe tener al menos 10 caracteres')
+                return redirect(f"{reverse('consulta_vehiculo')}?codigo={codigo_vehiculo}")
+            
+            # Crear la observación
+            observacion = ObservacionVehiculo(
+                vehiculo=vehiculo,
+                descripcion=descripcion,
+                creado_por=request.user.username if request.user.is_authenticated else 'Anónimo'
+            )
+            
+            # Procesar imagen principal si existe
+            if imagen_base64 and imagen_base64.startswith('data:image'):
+                observacion.imagen_base64 = imagen_base64.split(',')[1]
+            
+            # Procesar imágenes adicionales si existen
+            try:
+                imagenes = json.loads(imagenes_base64)
+                if imagenes and isinstance(imagenes, list):
+                    observacion.imagenes_base64 = json.dumps(imagenes)
+            except json.JSONDecodeError:
+                pass
+            
             observacion.save()
-
-            # También como imagen adicional
-            ImagenObservacion.objects.create(
-                observacion=observacion,
-                imagen_base64=foto_base64
-            )
-
-        # Imágenes subidas localmente (pueden ser varias)
-        for f in request.FILES.getlist('imagenes_base64'):
-            img_data = base64.b64encode(f.read()).decode()
-            ImagenObservacion.objects.create(
-                observacion=observacion,
-                imagen_base64=img_data
-            )
-
-        messages.success(request, 'Observación guardada correctamente.')
-        return redirect(f"{reverse('consulta_vehiculo')}?codigo={codigo}")
-
-    messages.error(request, 'Método no permitido.')
-    return redirect(f"{reverse('consulta_vehiculo')}?codigo={codigo}")
+            
+            messages.success(request, 'Observación registrada correctamente')
+            # Redirige usando el nombre correcto de la URL
+            return redirect(f"{reverse('consulta_vehiculo')}?codigo={codigo_vehiculo}")
+            
+        except Vehiculo.DoesNotExist:
+            messages.error(request, 'Vehículo no encontrado')
+            return redirect('consulta_vehiculo')  # Usa el mismo nombre aquí
+        except Exception as e:
+            messages.error(request, f'Error al registrar observación: {str(e)}')
+            return redirect('consulta_vehiculo')  # Y aquí
+    
+    return redirect('consulta_vehiculo')  # Y a
 
 
 def detalle_vehiculo(request, codigo):
