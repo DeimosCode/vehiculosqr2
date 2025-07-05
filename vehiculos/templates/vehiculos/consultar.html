@@ -222,6 +222,11 @@
             max-width: 150px;
             cursor: pointer;
             border-radius: 6px;
+            transition: transform 0.3s;
+        }
+
+        .observacion-img:hover {
+            transform: scale(1.05);
         }
 
         @media (max-width: 768px) {
@@ -249,62 +254,63 @@
             text-transform: capitalize;
             margin-right: 5px;
         }
-        #imageModal .modal-dialog {
-            max-width: 90vw;
-            max-height: 90vh;
-            margin: 0;
+        
+        /* Estilos mejorados para el modal de imagen */
+        .image-modal .modal-dialog {
+            max-width: 90%;
+            margin: 1.75rem auto;
             display: flex;
             align-items: center;
-            justify-content: center;
-            }
-
-            #imageModal .modal-content {
-            background: transparent !important; /* Sin fondo blanco */
-            border: none !important;
-            box-shadow: none !important;
-            }
-
-            #imageModal .modal-body {
+            min-height: calc(100% - 3.5rem);
+        }
+        
+        .image-modal .modal-content {
+            background: transparent;
+            border: none;
+        }
+        
+        .image-modal .modal-body {
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            }
-
-            #modalImage {
-            max-width: 90vw;
-            max-height: 90vh;
+            text-align: center;
+        }
+        
+        .image-modal .modal-img {
+            max-width: 100%;
+            max-height: 80vh;
+            margin: 0 auto;
+            display: block;
             border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.8);
-            cursor: zoom-out;
-            }
-
-            /* Botón cerrar simple, pequeño y blanco */
-            #imageModal .btn-close {
+        }
+        
+        .image-modal .btn-close {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            filter: invert(1);
-            opacity: 0.8;
-            z-index: 1051;
-            }
-
-            #imageModal .btn-close:hover {
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
             opacity: 1;
-            }
-                
+            padding: 0.5rem;
+            z-index: 1055;
+        }
+        
+        .image-modal .btn-close:hover {
+            background: rgba(0,0,0,0.7);
+        }
     </style>
     </head>
 
     <body>
-            {% if messages %}
-                {% for message in messages %}
-                <div class="alert-notification alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    <strong>{{ message.tags|title }}!</strong> {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endfor %}
-            {% endif %}
+        {% if messages %}
+        {% for message in messages %}
+        <div
+            class="alert-notification alert alert-{{ message.tags }} alert-dismissible fade show"
+            role="alert">
+            <strong>{{ message.tags|title }}!</strong> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
 
         <div class="dashboard-container">
 
@@ -358,56 +364,72 @@
                 </div>
             </form>
 
-            <div id="reader" style="display: none; width: 400px; height: 300px; margin: auto;"></div>
-
+            <div id="reader"
+                style="display: none; width: 400px; height: 300px; margin: auto;"></div>
 
             {% if vehiculo %}
             <button class="btn btn-warning mb-4" data-bs-toggle="modal"
                 data-bs-target="#modalObservacion">
                 <i class="fas fa-plus-circle"></i> Agregar Observación
             </button>
-  
-            
+
             <div class="modal fade" id="modalObservacion" tabindex="-1"
                 aria-hidden="true">
                 <div class="modal-dialog modal-lg">
-                    <form method="post" enctype="multipart/form-data" action="{% url 'registrar_observacion' vehiculo.codigo %}">
+                    <form method="post" enctype="multipart/form-data"
+                        action="{% url 'registrar_observacion' vehiculo.codigo %}">
                         {% csrf_token %}
                         <div class="modal-content">
                             <div class="modal-header">
-                            <h5 class="modal-title">Nueva Observación</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                <h5 class="modal-title">Nueva Observación</h5>
+                                <button type="button" class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
                             </div>
                             <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="descripcion" class="form-label">Descripción</label>
-                                <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <!-- Botón para abrir cámara -->
-                                <button type="button" class="btn btn-info mb-3" id="btnTomarFoto">
-                                <i class="fas fa-camera-retro"></i> Tomar Foto
-                                </button>
+                                <div class="mb-3">
+                                    <label for="descripcion"
+                                        class="form-label">Descripción</label>
+                                    <textarea class="form-control"
+                                        id="descripcion" name="descripcion"
+                                        rows="4" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <!-- Botón para abrir cámara -->
+                                    <button type="button"
+                                        class="btn btn-info mb-3"
+                                        id="btnTomarFoto">
+                                        <i class="fas fa-camera-retro"></i>
+                                        Tomar Foto
+                                    </button>
 
-                                <!-- Video para mostrar cámara -->
-                                <video id="video" width="320" height="240" autoplay style="display:none; border-radius: 8px; margin-bottom:10px;"></video>
+                                    <!-- Video para mostrar cámara -->
+                                    <video id="video" width="320" height="240"
+                                        autoplay
+                                        style="display:none; border-radius: 8px; margin-bottom:10px;"></video>
 
-                                <!-- Canvas para capturar foto -->
-                                <canvas id="canvas" width="1920" height="1080" style="display:none;"></canvas>
+                                    <!-- Canvas para capturar foto -->
+                                    <canvas id="canvas" width="1920"
+                                        height="1080"
+                                        style="display:none;"></canvas>
 
-                                <!-- Input oculto para imagen tomada en base64 -->
-                                <input type="hidden" id="fotoBase64" name="fotoBase64" />
+                                    <!-- Input oculto para imagen tomada en base64 -->
+                                    <input type="hidden" id="fotoBase64"
+                                        name="fotoBase64" />
 
-                                <!-- Input para subir archivos múltiples -->
-                                <input class="form-control" type="file" id="imagen" name="imagenes_base64" accept="image/*" multiple>
-                            </div>
+                                    <!-- Input para subir archivos múltiples -->
+                                    <input class="form-control" type="file"
+                                        id="imagen" name="imagenes_base64"
+                                        accept="image/*" multiple>
+                                </div>
                             </div>
                             <div class="modal-footer">
-                            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar</button>
+                                <button type="submit" class="btn btn-success"><i
+                                        class="fas fa-save"></i>
+                                    Guardar</button>
                             </div>
                         </div>
-                        </form>
-
+                    </form>
                 </div>
             </div>
 
@@ -420,155 +442,60 @@
                     </thead>
                     <tbody>
                         <tr><td><strong>Código</strong></td><td>{{vehiculo.codigo }}</td></tr>
-                        <tr><td><strong>Marca</strong></td><td>{{ vehiculo.marca}}</td></tr>
-                        <tr><td><strong>Modelo</strong></td><td>{{vehiculo.modelo }}</td></tr>
-                        <tr><td><strong>Año</strong></td><td>{{ vehiculo.anio}}</td></tr>
+                        <tr><td><strong>Marca</strong></td><td>{{vehiculo.marca}}</td></tr>
+                        <tr><td><strong>Modelo</strong></td><td>{{vehiculo.modelo}}</td></tr>
+                        <tr><td><strong>Año</strong></td><td>{{vehiculo.anio}}</td></tr>
                     </tbody>
                 </table>
             </div>
             {% endif %}
 
-           {% if vehiculo.observaciones.all %}
+            {% if vehiculo.observaciones.all %}
             <div class="mt-5">
                 <h3 style="color: var(--primary-color);">Observaciones</h3>
                 {% for obs in vehiculo.observaciones.all %}
                 <div class="observacion-card">
-                    <small class="text-muted">{{ obs.fecha|date:"d/m/Y H:i" }} - {{ obs.creado_por }}</small>
+                    <small class="text-muted">{{ obs.fecha|date:"d/m/Y H:i" }} -
+                        {{ obs.creado_por }}</small>
                     <p class="mt-2">{{ obs.descripcion }}</p>
 
                     {% if obs.get_image_data %}
-                    <img src="{{ obs.get_image_data }}" alt="Imagen observación" class="observacion-img" style="cursor:pointer;"
-                        data-bs-toggle="modal" data-bs-target="#imageModal" data-img-src="{{ obs.get_image_data }}">
+                    <img src="{{ obs.get_image_data }}" alt="Imagen observación"
+                        class="observacion-img" onclick="openImageModal('{{ obs.get_image_data }}')">
                     {% endif %}
 
                     {% for img in obs.imagenes.all %}
-                    <img src="{{ img.get_image_data }}" alt="" class="observacion-img" style="cursor:pointer;"
-                        data-bs-toggle="modal" data-bs-target="#imageModal" data-img-src="{{ img.get_image_data }}">
+                    <img src="{{ img.get_image_data }}" alt="Imagen observación"
+                        class="observacion-img" onclick="openImageModal('{{ img.get_image_data }}')">
                     {% endfor %}
                 </div>
                 {% endfor %}
             </div>
             {% endif %}
-
-
         </div>
 
-       <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            <div class="modal-body">
-                <img src="" id="modalImage" alt="Imagen ampliada" />
+        <!-- Modal para mostrar imágenes en grande -->
+        <div class="modal fade image-modal" id="imageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-body">
+                        <img id="modalImage" class="modal-img" src="" alt="Imagen ampliada">
+                    </div>
+                </div>
             </div>
-            </div>
         </div>
-        </div>
-
 
         <!-- JS -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
         <script>
-        const html5QrCode = new Html5Qrcode("reader");
-        const scanBtn = document.getElementById('scan-btn');
-        const readerDiv = document.getElementById('reader');
-        const codigoInput = document.getElementById('codigo-input');
-        let isScanning = false;
+            const html5QrCode = new Html5Qrcode("reader");
+            const scanBtn = document.getElementById('scan-btn');
+            const readerDiv = document.getElementById('reader');
+            const codigoInput = document.getElementById('codigo-input');
+            let isScanning = false;
 
-        // Ocultar alertas después de 5 segundos
-      
-
-        const qrCodeSuccessCallback = (decodedText) => {
-            codigoInput.value = decodedText;
-            stopScanning();
-            document.getElementById('codigo-form').submit();
-        };
-
-        function startScanning() {
-            codigoInput.value = '';
-            readerDiv.style.display = 'block';
-            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, qrCodeSuccessCallback)
-                .then(() => {
-                    isScanning = true;
-                    scanBtn.innerHTML = '<i class="fas fa-stop"></i> Detener escaneo';
-                })
-                .catch(err => alert("No se pudo iniciar la cámara."));
-        }
-
-        function stopScanning() {
-            html5QrCode.stop().then(() => {
-                isScanning = false;
-                readerDiv.style.display = 'none';
-                scanBtn.innerHTML = '<i class="fas fa-camera"></i> Iniciar escaneo';
-            });
-        }
-
-        scanBtn.addEventListener('click', () => isScanning ? stopScanning() : startScanning());
-
-        function printQRCode() {
-            const qrImage = document.querySelector('.qr-fixed img');
-            const codigo = document.querySelector('.qr-fixed strong').textContent;
-            const win = window.open('', '', 'width=400,height=600');
-            win.document.write(`
-                <html><head><title>QR</title></head><body>
-                <h2>Vehículo: ${codigo}</h2>
-                <img src="${qrImage.src}" style="max-width:100%">
-                </body></html>
-            `);
-            win.document.close();
-            win.print();
-        }
-
-
-        const btnTomarFoto = document.getElementById('btnTomarFoto');
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const fotoBase64 = document.getElementById('fotoBase64');
-
-        let stream;
-
-        btnTomarFoto.addEventListener('click', async () => {
-        if (video.style.display === 'none') {
-            // Abrir cámara
-            video.style.display = 'block';
-            try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-            btnTomarFoto.textContent = 'Capturar Foto';
-            } catch (err) {
-            alert('No se pudo acceder a la cámara');
-            }
-        } else {
-            // Capturar foto
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            const dataURL = canvas.toDataURL('image/jpeg');
-            fotoBase64.value = dataURL; // Guarda base64 en input oculto para enviar al backend
-
-            alert('Foto capturada y lista para guardar');
-
-            // Detener cámara
-            stream.getTracks().forEach(track => track.stop());
-            video.style.display = 'none';
-            btnTomarFoto.textContent = 'Tomar Foto';
-        }
-        });
-
-        document.querySelectorAll('.observacion-img').forEach(img => {
-            img.style.cursor = 'zoom-in'; // cursor que indica que es clickeable
-            img.addEventListener('click', () => {
-                const modalImg = document.getElementById('modalImage');
-                modalImg.src = img.src;
-
-                const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
-                imageModal.show();
-            });
-        });
-
-
-        </script>
-         <script>
             // Ocultar alertas después de 5 segundos
             setTimeout(function() {
                 var alerts = document.querySelectorAll('.alert-notification');
@@ -580,6 +507,94 @@
                     }, 500);
                 });
             }, 5000);
+
+            const qrCodeSuccessCallback = (decodedText) => {
+                codigoInput.value = decodedText;
+                stopScanning();
+                document.getElementById('codigo-form').submit();
+            };
+
+            function startScanning() {
+                codigoInput.value = '';
+                readerDiv.style.display = 'block';
+                html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, qrCodeSuccessCallback)
+                    .then(() => {
+                        isScanning = true;
+                        scanBtn.innerHTML = '<i class="fas fa-stop"></i> Detener escaneo';
+                    })
+                    .catch(err => alert("No se pudo iniciar la cámara."));
+            }
+
+            function stopScanning() {
+                html5QrCode.stop().then(() => {
+                    isScanning = false;
+                    readerDiv.style.display = 'none';
+                    scanBtn.innerHTML = '<i class="fas fa-camera"></i> Iniciar escaneo';
+                });
+            }
+
+            scanBtn.addEventListener('click', () => isScanning ? stopScanning() : startScanning());
+
+            function printQRCode() {
+                const qrImage = document.querySelector('.qr-fixed img');
+                const codigo = document.querySelector('.qr-fixed strong').textContent;
+                const win = window.open('', '', 'width=400,height=600');
+                win.document.write(`
+                    <html><head><title>QR</title></head><body>
+                    <h2>Vehículo: ${codigo}</h2>
+                    <img src="${qrImage.src}" style="max-width:100%">
+                    </body></html>
+                `);
+                win.document.close();
+                win.print();
+            }
+
+            const btnTomarFoto = document.getElementById('btnTomarFoto');
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const fotoBase64 = document.getElementById('fotoBase64');
+
+            let stream;
+
+            btnTomarFoto.addEventListener('click', async () => {
+                if (video.style.display === 'none') {
+                    // Abrir cámara
+                    video.style.display = 'block';
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        video.srcObject = stream;
+                        btnTomarFoto.textContent = 'Capturar Foto';
+                    } catch (err) {
+                        alert('No se pudo acceder a la cámara');
+                    }
+                } else {
+                    // Capturar foto
+                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const dataURL = canvas.toDataURL('image/jpeg');
+                    fotoBase64.value = dataURL; // Guarda base64 en input oculto para enviar al backend
+
+                    alert('Foto capturada y lista para guardar');
+
+                    // Detener cámara
+                    stream.getTracks().forEach(track => track.stop());
+                    video.style.display = 'none';
+                    btnTomarFoto.textContent = 'Tomar Foto';
+                }
+            });
+
+            // Función para abrir el modal con la imagen seleccionada
+            function openImageModal(imageSrc) {
+                const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+                const modalImage = document.getElementById('modalImage');
+                modalImage.src = imageSrc;
+                modal.show();
+            }
+
+            // Cerrar modal al hacer clic en la imagen
+            document.getElementById('modalImage').addEventListener('click', function() {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('imageModal'));
+                modal.hide();
+            });
         </script>
     </body>
 </html>
