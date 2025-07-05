@@ -484,6 +484,23 @@
                 max-width: 100px;
             }
         }
+        .loading-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
     </style>
 </head>
 
@@ -688,28 +705,113 @@
         </div>
     </div>
 
+    <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+    </div>
+
     <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
-        // Configuración del escáner QR
+        // =============================================
+        // CONFIGURACIÓN GENERAL Y CONSTANTES
+        // =============================================
+        const MAX_IMAGES = 5;
+        const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+        const MAX_TOTAL_SIZE = 20 * 1024 * 1024; // 20MB
+        const IMAGE_COMPRESSION_QUALITY = 0.7;
+        const IMAGE_MAX_WIDTH = 800;
+
+        // =============================================
+        // ELEMENTOS DEL DOM
+        // =============================================
+        // Escáner QR
         const html5QrCode = new Html5Qrcode("reader");
         const scanBtn = document.getElementById('scan-btn');
         const readerDiv = document.getElementById('reader');
         const codigoInput = document.getElementById('codigo-input');
-        let isScanning = false;
+        
+        // Cámara y fotos
+        let stream = null;
+        let currentCamera = 'environment';
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const fotoBase64 = document.getElementById('fotoBase64');
+        const btnTomarFoto = document.getElementById('btnTomarFoto');
+        const btnTomarFotoFrontal = document.getElementById('btnTomarFotoFrontal');
+        const btnCapturar = document.getElementById('btnCapturar');
+        const fotoPreview = document.getElementById('fotoPreview');
+        const previewImage = document.getElementById('previewImage');
+        const btnEliminarFoto = document.getElementById('btnEliminarFoto');
+        const galeriaPreview = document.getElementById('galeriaPreview');
+        const inputImagen = document.getElementById('imagen');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
+        // Menú
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
 
-        // Ocultar alertas después de 5 segundos
-        setTimeout(function() {
-            var alerts = document.querySelectorAll('.alert-notification');
-            alerts.forEach(function(alert) {
-                alert.style.transition = 'opacity 0.5s';
-                alert.style.opacity = '0';
-                setTimeout(function() {
-                    alert.remove();
-                }, 500);
+        // =============================================
+        // FUNCIONES DE UTILIDAD
+        // =============================================
+        
+        /**
+         * Función para comprimir imágenes
+         * @param {File} file - Archivo de imagen a comprimir
+         * @param {number} maxWidth - Ancho máximo de la imagen comprimida
+         * @param {number} quality - Calidad de compresión (0 a 1)
+         * @returns {Promise<string>} - Promise que resuelve con la imagen comprimida en base64
+         */
+        function compressImage(file, maxWidth = IMAGE_MAX_WIDTH, quality = IMAGE_COMPRESSION_QUALITY) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Calcular nuevas dimensiones manteniendo aspect ratio
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             });
-        }, 5000);
+        }
+
+        /**
+         * Oculta todas las alertas después de 5 segundos
+         */
+        function hideAlertsAfterTimeout() {
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert-notification');
+                alerts.forEach((alert) => {
+                    alert.style.transition = 'opacity 0.5s';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 5000);
+        }
+
+        // =============================================
+        // FUNCIONALIDAD DEL ESCÁNER QR
+        // =============================================
+        let isScanning = false;
 
         const qrCodeSuccessCallback = (decodedText) => {
             codigoInput.value = decodedText;
@@ -752,21 +854,10 @@
             win.print();
         }
 
-        // Configuración de la cámara y manejo de imágenes
-        let stream = null;
-        let currentCamera = 'environment'; // Por defecto cámara trasera
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const fotoBase64 = document.getElementById('fotoBase64');
-        const btnTomarFoto = document.getElementById('btnTomarFoto');
-        const btnTomarFotoFrontal = document.getElementById('btnTomarFotoFrontal');
-        const btnCapturar = document.getElementById('btnCapturar');
-        const fotoPreview = document.getElementById('fotoPreview');
-        const previewImage = document.getElementById('previewImage');
-        const btnEliminarFoto = document.getElementById('btnEliminarFoto');
-        const galeriaPreview = document.getElementById('galeriaPreview');
-        const inputImagen = document.getElementById('imagen');
-
+        // =============================================
+        // FUNCIONALIDAD DE LA CÁMARA Y FOTOS
+        // =============================================
+        
         // Configurar canvas con dimensiones adecuadas
         canvas.width = 1280;
         canvas.height = 720;
@@ -782,7 +873,9 @@
             iniciarCamara();
         });
 
-        // Función para iniciar la cámara
+        /**
+         * Inicia la cámara del dispositivo
+         */
         async function iniciarCamara() {
             try {
                 // Detener cualquier transmisión anterior
@@ -815,8 +908,10 @@
             }
         }
 
-        // Capturar foto
-        btnCapturar.addEventListener('click', () => {
+        /**
+         * Captura una foto desde la cámara y la muestra como vista previa
+         */
+        function capturarFoto() {
             // Ajustar canvas al tamaño del video
             const videoWidth = video.videoWidth;
             const videoHeight = video.videoHeight;
@@ -827,7 +922,7 @@
             canvas.getContext('2d').drawImage(video, 0, 0, videoWidth, videoHeight);
             
             // Obtener la imagen en base64
-            const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+            const dataURL = canvas.toDataURL('image/jpeg', IMAGE_COMPRESSION_QUALITY);
             fotoBase64.value = dataURL;
             
             // Mostrar vista previa
@@ -844,36 +939,55 @@
             // Mostrar botones de cámara nuevamente
             btnTomarFoto.style.display = 'block';
             btnTomarFotoFrontal.style.display = 'block';
-        });
+        }
 
-        // Eliminar foto capturada
-        btnEliminarFoto.addEventListener('click', () => {
+        btnCapturar.addEventListener('click', capturarFoto);
+
+        /**
+         * Elimina la foto capturada
+         */
+        function eliminarFoto() {
             fotoBase64.value = '';
             fotoPreview.style.display = 'none';
             previewImage.src = '#';
-        });
+        }
 
-        // Manejar selección de imágenes de galería
-        inputImagen.addEventListener('change', function(e) {
-            galeriaPreview.innerHTML = '';
+        btnEliminarFoto.addEventListener('click', eliminarFoto);
+
+        // =============================================
+        // MANEJO DE IMÁGENES SUBIDAS
+        // =============================================
+        
+        /**
+         * Procesa las imágenes seleccionadas para subir
+         * @param {FileList} files - Lista de archivos de imagen
+         */
+   
+        if (!loadingSpinner) console.error('Elemento loadingSpinner no encontrado');
+        if (!galeriaPreview) console.error('Elemento galeriaPreview no encontrado');
+        if (!inputImagen) console.error('Elemento inputImagen no encontrado');
+
+        async function procesarImagenes(files) {
+            // Verificar que los elementos existen
+            if (loadingSpinner) loadingSpinner.style.display = 'flex';
+            if (galeriaPreview) galeriaPreview.innerHTML = '';
             
-            if (this.files && this.files.length > 0) {
-                for (let i = 0; i < this.files.length; i++) {
-                    const file = this.files[i];
+            try {
+                if (!files || !files.length) return;
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
                     
-                    if (!file.type.match('image.*')) {
-                        continue; // Saltar si no es una imagen
-                    }
+                    if (!file.type.match('image.*')) continue;
                     
-                    const reader = new FileReader();
+                    const compressedImage = await compressImage(file);
                     
-                    reader.onload = function(e) {
-                        // Crear elemento de vista previa
+                    if (galeriaPreview) {
                         const previewDiv = document.createElement('div');
                         previewDiv.className = 'img-preview-container';
                         
                         const img = document.createElement('img');
-                        img.src = e.target.result;
+                        img.src = compressedImage;
                         img.className = 'img-preview';
                         
                         const deleteBtn = document.createElement('button');
@@ -881,70 +995,115 @@
                         deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
                         deleteBtn.onclick = function() {
                             previewDiv.remove();
-                            // Crear un nuevo DataTransfer para actualizar los archivos
                             const newFiles = new DataTransfer();
                             for (let j = 0; j < inputImagen.files.length; j++) {
                                 if (j !== i) {
                                     newFiles.items.add(inputImagen.files[j]);
                                 }
                             }
-                            inputImagen.files = newFiles.files;
+                            if (inputImagen) inputImagen.files = newFiles.files;
                         };
                         
                         previewDiv.appendChild(img);
                         previewDiv.appendChild(deleteBtn);
                         galeriaPreview.appendChild(previewDiv);
-                    };
-                    
-                    reader.readAsDataURL(file);
+                    }
                 }
+            } catch (err) {
+                console.error("Error al procesar imágenes:", err);
+                alert('Ocurrió un error al procesar las imágenes');
+            } finally {
+                if (loadingSpinner) loadingSpinner.style.display = 'none';
             }
-        });
+        }
 
-        // Convertir imágenes seleccionadas a base64 antes de enviar el formulario
-        document.querySelector('#modalObservacion form').addEventListener('submit', function(e) {
-            // Si hay imágenes seleccionadas, convertirlas a base64
-            if (inputImagen.files && inputImagen.files.length > 0) {
-                e.preventDefault();
+        // Manejar el evento change del input de imágenes de forma segura
+        if (inputImagen) {
+            inputImagen.addEventListener('change', function(e) {
+                if (!this.files || !this.files.length) return;
                 
-                const promises = [];
-                const base64Images = [];
+                if (this.files.length > MAX_IMAGES) {
+                    alert(`Solo puedes subir máximo ${MAX_IMAGES} imágenes`);
+                    this.value = '';
+                    return;
+                }
                 
-                for (let i = 0; i < inputImagen.files.length; i++) {
-                    const file = inputImagen.files[i];
-                    
-                    if (file.type.match('image.*')) {
-                        const promise = new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                // Obtener solo la parte base64 (sin el prefijo data:image/...)
-                                const base64String = e.target.result.split(',')[1];
-                                base64Images.push(base64String);
-                                resolve();
-                            };
-                            reader.readAsDataURL(file);
-                        });
-                        
-                        promises.push(promise);
+                for (let file of this.files) {
+                    if (file.size > MAX_IMAGE_SIZE) {
+                        alert(`La imagen ${file.name} es demasiado grande (máx. 5MB)`);
+                        this.value = '';
+                        return;
                     }
                 }
                 
-                // Esperar a que todas las imágenes se conviertan
-                Promise.all(promises).then(() => {
-                    // Crear un input oculto con todas las imágenes en base64
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'imagenes_base64';
-                    hiddenInput.value = JSON.stringify(base64Images);
-                    this.appendChild(hiddenInput);
-                    
-                    // Enviar el formulario
-                    this.submit();
-                });
-            }
-        });
+                procesarImagenes(this.files);
+            });
+        }
 
-        // Función para abrir el modal con la imagen seleccionada
+        // Manejar el envío del formulario de forma segura
+        const observacionForm = document.querySelector('#modalObservacion form');
+        if (observacionForm) {
+            observacionForm.addEventListener('submit', async function(e) {
+                const descripcion = document.getElementById('descripcion');
+                if (descripcion && descripcion.value.trim().length < 10) {
+                    e.preventDefault();
+                    alert('La descripción debe tener al menos 10 caracteres');
+                    return;
+                }
+
+                if (inputImagen && inputImagen.files && inputImagen.files.length > 0) {
+                    e.preventDefault();
+                    if (loadingSpinner) loadingSpinner.style.display = 'flex';
+                    
+                    try {
+                        const base64Images = [];
+                        
+                        for (let i = 0; i < inputImagen.files.length; i++) {
+                            const file = inputImagen.files[i];
+                            
+                            if (file.type.match('image.*')) {
+                                const base64String = await new Promise((resolve) => {
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        resolve(e.target.result.split(',')[1]);
+                                    };
+                                    reader.readAsDataURL(file);
+                                });
+                                
+                                base64Images.push(base64String);
+                            }
+                        }
+                        
+                        const totalSize = base64Images.reduce((sum, img) => sum + img.length, 0);
+                        if (totalSize > MAX_TOTAL_SIZE) {
+                            alert('El tamaño total de las imágenes excede el límite de 20MB');
+                            if (loadingSpinner) loadingSpinner.style.display = 'none';
+                            return;
+                        }
+                        
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'imagenes_base64';
+                        hiddenInput.value = JSON.stringify(base64Images);
+                        this.appendChild(hiddenInput);
+                        
+                        this.submit();
+                    } catch (err) {
+                        console.error("Error al procesar imágenes:", err);
+                        alert('Ocurrió un error al procesar las imágenes');
+                        if (loadingSpinner) loadingSpinner.style.display = 'none';
+                    }
+                }
+            });
+        }
+        // =============================================
+        // MODAL DE IMAGEN
+        // =============================================
+        
+        /**
+         * Abre el modal con la imagen seleccionada
+         * @param {string} imageSrc - URL de la imagen a mostrar
+         */
         function openImageModal(imageSrc) {
             const modal = new bootstrap.Modal(document.getElementById('imageModal'));
             const modalImage = document.getElementById('modalImage');
@@ -952,16 +1111,14 @@
             modal.show();
         }
 
-        // Cerrar modal al hacer clic en la imagen
         document.getElementById('modalImage').addEventListener('click', function() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('imageModal'));
             modal.hide();
         });
 
-        // Menú hamburguesa para móviles
-        const menuToggle = document.getElementById('menuToggle');
-        const navMenu = document.getElementById('navMenu');
-        
+        // =============================================
+        // MENÚ HAMBURGUESA PARA MÓVILES
+        // =============================================
         menuToggle.addEventListener('click', function() {
             navMenu.classList.toggle('active');
             const icon = menuToggle.querySelector('i');
@@ -973,6 +1130,11 @@
                 icon.classList.add('fa-bars');
             }
         });
+
+        // =============================================
+        // INICIALIZACIÓN
+        // =============================================
+        hideAlertsAfterTimeout();
     </script>
 </body>
 </html>

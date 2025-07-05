@@ -130,56 +130,49 @@ def logout_view(request):
     return redirect('login')
 
 import json
-
+from django.core.exceptions import ValidationError
 # vehiculos/views.py
-
+from django.views.decorators.http import require_POST
+@require_POST
 def registrar_observacion(request, codigo_vehiculo):
-    if request.method == 'POST':
-        try:
-            vehiculo = get_object_or_404(Vehiculo, codigo=codigo_vehiculo)
-            
-            descripcion = request.POST.get('descripcion', '').strip()
-            imagen_base64 = request.POST.get('fotoBase64', '')
-            imagenes_base64 = request.POST.get('imagenes_base64', '[]')
-            
-            # Validación de la descripción
-            if len(descripcion) < 1:
-                messages.error(request, 'La descripción debe tener al menos 10 caracteres')
-                return redirect(f"{reverse('consulta_vehiculo')}?codigo={codigo_vehiculo}")
-            
-            # Crear la observación
-            observacion = ObservacionVehiculo(
-                vehiculo=vehiculo,
-                descripcion=descripcion,
-                creado_por=request.user.username if request.user.is_authenticated else 'Anónimo'
-            )
-            
-            # Procesar imagen principal si existe
-            if imagen_base64 and imagen_base64.startswith('data:image'):
-                observacion.imagen_base64 = imagen_base64.split(',')[1]
-            
-            # Procesar imágenes adicionales si existen
-            try:
-                imagenes = json.loads(imagenes_base64)
-                if imagenes and isinstance(imagenes, list):
-                    observacion.imagenes_base64 = json.dumps(imagenes)
-            except json.JSONDecodeError:
-                pass
-            
-            observacion.save()
-            
-            messages.success(request, 'Observación registrada correctamente')
-            # Redirige usando el nombre correcto de la URL
-            return redirect(f"{reverse('consulta_vehiculo')}?codigo={codigo_vehiculo}")
-            
-        except Vehiculo.DoesNotExist:
-            messages.error(request, 'Vehículo no encontrado')
-            return redirect('consulta_vehiculo')  # Usa el mismo nombre aquí
-        except Exception as e:
-            messages.error(request, f'Error al registrar observación: {str(e)}')
-            return redirect('consulta_vehiculo')  # Y aquí
+    try:
+        vehiculo = get_object_or_404(Vehiculo, codigo=codigo_vehiculo)
+        
+        # Validación de descripción
+        descripcion = request.POST.get('descripcion', '').strip()
+        if len(descripcion) < 10:
+            raise ValidationError("La descripción debe tener al menos 10 caracteres")
+        
+        # Procesamiento de imágenes optimizado
+        imagen_base64 = request.POST.get('fotoBase64', '')
+        imagenes_base64 = request.POST.get('imagenes_base64', '[]')
+        
+        # Validar tamaño total de imágenes
+        total_size = len(imagen_base64) + len(imagenes_base64)
+        if total_size > 20 * 1024 * 1024:  # 20MB límite
+            raise ValidationError("El tamaño total de las imágenes no puede exceder 20MB")
+        
+        # Crear observación
+        observacion = ObservacionVehiculo(
+            vehiculo=vehiculo,
+            descripcion=descripcion,
+            creado_por=request.user.username if request.user.is_authenticated else 'Anónimo',
+            imagen_base64=imagen_base64.split(',')[1] if imagen_base64.startswith('data:image') else None,
+            imagenes_base64=imagenes_base64 if imagenes_base64 != '[]' else None
+        )
+        
+        observacion.save()
+        messages.success(request, 'Observación registrada correctamente')
+        return redirect(f"{reverse('consulta_vehiculo')}?codigo={codigo_vehiculo}")
     
-    return redirect('consulta_vehiculo')  # Y a
+    except Vehiculo.DoesNotExist:
+        messages.error(request, 'Vehículo no encontrado')
+    except ValidationError as e:
+        messages.error(request, str(e))
+    except Exception as e:
+        messages.error(request, f'Error al registrar observación: {str(e)}')
+    
+    return redirect('consulta_vehiculo')
 
 
 def detalle_vehiculo(request, codigo):

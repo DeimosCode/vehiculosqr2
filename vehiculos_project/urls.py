@@ -25,8 +25,8 @@ handler404 = 'vehiculos.views.error_404_view'
 
 urlpatterns = [
     path('', RedirectView.as_view(url='/vehiculos/login/')),
-    # path('admin/', admin.site.urls),
-    path('admin/', admin_site.urls),
+    path('admin/', admin.site.urls),
+    #path('admin/', admin_site.urls),
     path('vehiculos/', include('vehiculos.urls')),
 ]
 
