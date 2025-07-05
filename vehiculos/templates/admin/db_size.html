@@ -1,0 +1,6 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+  <h1>{{ title }}</h1>
+  <p><strong>Tamaño total de la base de datos:</strong> {{ db_size }}</p>
+  <a href="{% url 'admin:index' %}">Volver al panel</a>
+{% endblock %}

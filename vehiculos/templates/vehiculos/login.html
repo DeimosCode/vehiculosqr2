@@ -205,21 +205,72 @@
             border-left: none;
         }
 
-        /* Responsive */
+        /* Correcciones de responsividad */
         @media (max-width: 576px) {
             .login-container {
                 padding: 1.5rem;
-                margin: 1rem;
+                margin: 1rem auto;
+                max-width: 95%;
+                border-radius: 10px;
             }
             
             .logo {
-                width: 100px;
-                height: 100px;
+                width: 80px;
+                height: 80px;
             }
             
             .brand-name {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
+                margin-top: 0.8rem;
             }
+            
+            .brand-subtitle {
+                font-size: 0.8rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .form-control {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .btn-login {
+                padding: 0.65rem;
+                font-size: 0.9rem;
+            }
+            
+            .input-group-text {
+                padding: 0.8rem;
+            }
+            
+            .footer-text {
+                font-size: 0.75rem;
+                margin-top: 1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .login-container {
+                padding: 1.2rem;
+            }
+            
+            .brand-name {
+                font-size: 1.3rem;
+            }
+            
+            .form-floating label {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Asegurar que los inputs no excedan el ancho en móviles */
+        .input-group {
+            width: 100%;
+        }
+        
+        /* Mejorar el espaciado en móviles */
+        .form-floating {
+            margin-bottom: 1rem;
         }
     </style>
 </head>

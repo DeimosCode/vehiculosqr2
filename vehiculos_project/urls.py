@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from vehiculos.admin import admin_site
 from django.views.generic import RedirectView
 
 handler400 = 'vehiculos.views.error_400_view'
@@ -24,7 +25,8 @@ handler404 = 'vehiculos.views.error_404_view'
 
 urlpatterns = [
     path('', RedirectView.as_view(url='/vehiculos/login/')),
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    path('admin/', admin_site.urls),
     path('vehiculos/', include('vehiculos.urls')),
 ]
 
