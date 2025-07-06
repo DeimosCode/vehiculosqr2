@@ -1,15 +1,9 @@
-from django.db import models
-from django.utils import timezone
 
 from django.db import models
 from django.utils import timezone
 import json
 from django.core.exceptions import ValidationError
 
-from django.db import models
-from django.utils import timezone
-import json
-from django.core.exceptions import ValidationError
 
 class Vehiculo(models.Model):
     codigo = models.CharField(max_length=100, unique=True)
