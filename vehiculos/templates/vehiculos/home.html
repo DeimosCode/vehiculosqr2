@@ -365,42 +365,51 @@
             {% endfor %}
         {% endif %}
 
+        <!-- Tabla de Vehículos -->
         <div class="dashboard-card">
-            <!-- Encabezado -->
-            <div class="welcome-header">
-                {% if user.is_authenticated %}
-                    <h1>Bienvenido {{ user.username }}</h1>
-                {% else %}
-                    <p>No has iniciado sesión.</p>
-                {% endif %}
-                <p>Panel de control del sistema de gestión de taller</p>
+            <h3 class="mb-4" style="color: var(--primary-color); font-weight: 600;">Listado de Vehículos</h3>
+
+            <div class="row mb-3">
+                <div class="col-md-6 mb-2">
+                    <input type="text" id="searchCodigo" class="form-control" placeholder="Buscar por código...">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="date" id="searchFecha" class="form-control" placeholder="Buscar por fecha...">
+                </div>
             </div>
 
-            <!-- Estadísticas -->
-            <h3 class="mb-4" style="color: var(--primary-color); font-weight: 600;">Resumen del Sistema</h3>
-            <div class="stats-container">
-                <div class="stat-card active">
-                    <h3 class="stat-title">Vehículos Activos</h3>
-                    <div class="stat-value">5</div>
-                    <i class="fas fa-check-circle stat-icon"></i>
-                </div>
-                <div class="stat-card pending">
-                    <h3 class="stat-title">Pendientes</h3>
-                    <div class="stat-value">8</div>
-                    <i class="fas fa-clock stat-icon"></i>
-                </div>
-                <div class="stat-card comments">
-                    <h3 class="stat-title">Comentarios</h3>
-                    <div class="stat-value">12</div>
-                    <i class="fas fa-comments stat-icon"></i>
-                </div>
-                <div class="stat-card users">
-                    <h3 class="stat-title">Usuarios</h3>
-                    <div class="stat-value">20</div>
-                    <i class="fas fa-users stat-icon"></i>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered" id="vehiculosTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Código</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Año</th>
+                            <th>Fecha Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vehiculo in vehiculos %}
+                        <tr>
+                            <td>{{ vehiculo.codigo }}</td>
+                            <td>{{ vehiculo.marca }}</td>
+                            <td>{{ vehiculo.modelo }}</td>
+                            <td>{{ vehiculo.anio }}</td>
+                            <td>{{ vehiculo.fecha_registro|date:"Y-m-d" }}</td>
+                            <td>
+                                <a href="{% url 'consulta_vehiculo' %}?codigo={{ vehiculo.codigo }}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye"></i> Consultar
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
+
     </div>
 
     <!-- Bootstrap JS Bundle with Popper -->
@@ -422,6 +431,28 @@
                 icon.classList.add('fa-bars');
             }
         });
+
+        const codigoInput = document.getElementById("searchCodigo");
+        const fechaInput = document.getElementById("searchFecha");
+        const tabla = document.getElementById("vehiculosTable").getElementsByTagName("tbody")[0];
+
+        function filtrarTabla() {
+            const codigo = codigoInput.value.toLowerCase();
+            const fecha = fechaInput.value;
+
+            Array.from(tabla.rows).forEach(row => {
+                const codigoText = row.cells[0].textContent.toLowerCase();
+                const fechaText = row.cells[4].textContent;
+
+                const coincideCodigo = codigoText.includes(codigo);
+                const coincideFecha = !fecha || fechaText === fecha;
+
+                row.style.display = (coincideCodigo && coincideFecha) ? "" : "none";
+            });
+        }
+
+        codigoInput.addEventListener("input", filtrarTabla);
+        fechaInput.addEventListener("input", filtrarTabla);
 
         // Ocultar alertas después de 5 segundos
         setTimeout(function() {

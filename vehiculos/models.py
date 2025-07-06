@@ -10,6 +10,7 @@ class Vehiculo(models.Model):
     marca = models.CharField(max_length=50)
     modelo = models.CharField(max_length=50)
     anio = models.IntegerField()
+    fecha_registro = models.DateTimeField(default=timezone.now, verbose_name="Fecha de registro")
 
     def __str__(self):
         return f"{self.marca} {self.modelo} ({self.anio})"

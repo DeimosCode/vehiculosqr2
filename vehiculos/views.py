@@ -20,6 +20,7 @@ def registrar_vehiculo(request):
         marca = request.POST.get('marca')
         modelo = request.POST.get('modelo')
         anio = request.POST.get('anio')
+        
 
         # Validar que los campos no estén vacíos
         if not codigo or not marca or not modelo or not anio:
@@ -116,7 +117,9 @@ def register_view(request):
 
 
 def home_view(request):
-    return render(request, 'vehiculos/home.html')
+    vehiculos = Vehiculo.objects.all().order_by('-fecha_registro')  # o por '-id'
+    return render(request, 'vehiculos/home.html', {'vehiculos': vehiculos})
+
 
 
 def logout_view(request):
