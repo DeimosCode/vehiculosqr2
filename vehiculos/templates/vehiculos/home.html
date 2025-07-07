@@ -11,20 +11,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
+      <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --dark-color: #1a252f;
-            --light-color: #ecf0f1;
+            /* Paleta de colores del logo */
+            --rangoon-green: #060605;
+            --quill-gray: #d4d3d0;
+            --galliano: #daa104;
+            --antique-bronze: #6d4c04;
+            
+            /* Estructura de colores */
+            --primary-color: var(--rangoon-green);
+            --secondary-color: var(--galliano);
+            --accent-color: var(--antique-bronze);
+            --light-color: var(--quill-gray);
+            --dark-color: #121212;
             --header-height: 70px;
         }
         
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, var(--dark-color) 0%, var(--primary-color) 100%);
-            color: #333;
+            background: var(--dark-color);
+            color: var(--quill-gray);
             margin: 0;
             padding: 0;
             padding-top: var(--header-height);
@@ -38,8 +45,8 @@
             left: 0;
             width: 100%;
             height: var(--header-height);
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            background: var(--rangoon-green);
+            box-shadow: 0 2px 15px rgba(218, 161, 4, 0.2);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -55,26 +62,35 @@
             align-items: center;
         }
 
-        .logo-container {
-            display: flex;
+       .logo-container {
+            position: relative;
+            display: inline-flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 12px;
+            padding: 8px 15px;
         }
 
+        
+
         .logo-img {
-            height: 40px;
-            width: auto;
-            border-radius: 50%;
-            border: 2px solid var(--secondary-color);
+            height: 45px;
+            filter: 
+                drop-shadow(0 0 6px rgba(218, 161, 4, 0.7)) /* Sombra dorada exterior */
+                drop-shadow(0 0 12px rgba(218, 161, 4, 0.4)); /* Efecto glow */
+            transition: all 0.3s ease;
         }
 
         .brand-name {
-            color: var(--primary-color);
-            font-weight: 700;
-            font-size: 1.3rem;
-            margin: 0;
-            white-space: nowrap;
+            color: var(--rangoon-green);
+            font-weight: 800;
+            text-shadow: 
+                0 0 8px var(--galliano), /* Sombra dorada */
+                0 0 12px rgba(212, 211, 208, 0.5), /* Efecto neón */
+                1px 1px 0px rgba(0,0,0,0.3); /* Sombra tradicional para profundidad */
+            position: relative;
+            z-index: 1;
         }
+
 
         .nav-menu {
             display: flex;
@@ -85,9 +101,9 @@
         .nav-button {
             position: relative;
             padding: 0.5rem 1.2rem;
-            background: white;
-            color: var(--primary-color);
-            border: 2px solid var(--secondary-color);
+            background: var(--rangoon-green);
+            color: var(--galliano);
+            border: 2px solid var(--galliano);
             border-radius: 6px;
             font-weight: 600;
             text-transform: uppercase;
@@ -103,10 +119,10 @@
         }
 
         .nav-button:hover {
-            background: var(--secondary-color);
-            color: white;
+            background: var(--galliano) !important;
+            color: var(--rangoon-green) !important;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 4px 8px rgba(218, 161, 4, 0.3);
         }
 
         .nav-button i {
@@ -122,11 +138,12 @@
         }
 
         .dashboard-card {
-            background: rgba(255, 255, 255, 0.97);
+            background: rgba(6, 6, 5, 0.95);
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(218, 161, 4, 0.1);
             padding: 2.5rem;
             margin-bottom: 2rem;
+            border: 1px solid var(--antique-bronze);
         }
 
         .welcome-header {
@@ -136,79 +153,61 @@
         }
 
         .welcome-header h1 {
-            color: var(--primary-color);
+            color: var(--galliano);
             font-weight: 700;
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
         }
 
         .welcome-header p {
-            color: #7f8c8d;
+            color: var(--quill-gray);
             font-size: 1.1rem;
+            opacity: 0.8;
         }
 
-        /* Estadísticas */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+        /* Tablas */
+        .table {
+            color: var(--quill-gray);
+            border-color: var(--antique-bronze);
         }
 
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border-left: 4px solid var(--secondary-color);
+        .table-light {
+            background-color: rgba(109, 76, 4, 0.3) !important;
+            color: var(--galliano) !important;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        .table-hover tbody tr:hover {
+            background-color: rgba(218, 161, 4, 0.1) !important;
+            color: var(--galliano);
         }
 
-        .stat-card.active {
-            border-left-color: #27ae60;
+        .table th {
+            border-bottom: 2px solid var(--galliano) !important;
         }
 
-        .stat-card.pending {
-            border-left-color: #f39c12;
+        /* Botones */
+        .btn-outline-primary {
+            color: var(--galliano);
+            border-color: var(--galliano);
         }
 
-        .stat-card.comments {
-            border-left-color: #3498db;
+        .btn-outline-primary:hover {
+            background-color: var(--galliano);
+            color: var(--rangoon-green);
         }
 
-        .stat-card.users {
-            border-left-color: #e74c3c;
+        /* Formularios */
+        .form-control {
+            background-color: rgba(6, 6, 5, 0.8);
+            border: 1px solid var(--antique-bronze);
+            color: var(--quill-gray);
         }
 
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin: 0.5rem 0;
-        }
-
-        .stat-title {
-            font-size: 1rem;
-            color: #7f8c8d;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .stat-icon {
-            position: absolute;
-            right: 1.5rem;
-            top: 1.5rem;
-            font-size: 2.5rem;
-            opacity: 0.2;
-            color: var(--primary-color);
+        .form-control:focus {
+            background-color: rgba(6, 6, 5, 0.9);
+            border-color: var(--galliano);
+            color: var(--quill-gray);
+            box-shadow: 0 0 0 0.25rem rgba(218, 161, 4, 0.25);
         }
 
         /* Alertas */
@@ -221,6 +220,105 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             animation: slideIn 0.5s forwards;
             max-width: 350px;
+            background: var(--rangoon-green);
+            border: 1px solid var(--galliano);
+            color: var(--quill-gray);
+        }
+
+        .alert-success {
+            border-color: #28a745;
+        }
+
+        .alert-danger {
+            border-color: #dc3545;
+        }
+
+        /* Efecto hover dinámico */
+        .logo-container:hover .logo-img {
+            filter: 
+                drop-shadow(0 0 10px rgba(218, 161, 4, 0.9))
+                drop-shadow(0 0 20px rgba(218, 161, 4, 0.6));
+        }
+
+        .logo-container:hover .brand-name {
+            text-shadow: 
+                0 0 12px var(--galliano),
+                0 0 18px rgba(212, 211, 208, 0.7),
+                2px 2px 2px rgba(0,0,0,0.4);
+        }
+
+        /* Estilos para el modal oscuro */
+        .modal-content {
+            background-color: var(--rangoon-green);
+            border: 1px solid var(--galliano);
+            color: var(--quill-gray);
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--antique-bronze);
+            padding: 1rem 1.5rem;
+        }
+
+        .modal-title {
+            color: var(--galliano);
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--antique-bronze);
+            padding: 1rem 1.5rem;
+        }
+
+        /* Estilos para los botones del modal */
+        .modal-footer .btn-secondary {
+            background-color: var(--antique-bronze);
+            color: var(--quill-gray);
+            border: none;
+        }
+
+        .modal-footer .btn-success {
+            background-color: var(--galliano);
+            color: var(--rangoon-green);
+            border: none;
+            font-weight: 600;
+        }
+
+        /* Estilos para los inputs en el modal */
+        .modal-content .form-control {
+            background-color: rgba(6, 6, 5, 0.8);
+            border: 1px solid var(--antique-bronze);
+            color: white;
+            font-weight: 500;
+        }
+
+        .modal-content .form-control:focus {
+            border-color: var(--galliano);
+            box-shadow: 0 0 0 0.25rem rgba(218, 161, 4, 0.25);
+        }
+
+        /* Estilos para el textarea */
+        .modal-content textarea.form-control {
+            min-height: 120px;
+            background-color: rgba(6, 6, 5, 0.8);
+            color: white;
+        }
+
+        /* Estilos para los botones de cámara */
+        #btnTomarFoto, #btnTomarFotoFrontal {
+            background-color: var(--antique-bronze);
+            color: var(--quill-gray);
+            border: none;
+            transition: all 0.3s;
+        }
+
+        #btnTomarFoto:hover, #btnTomarFotoFrontal:hover {
+            background-color: var(--galliano);
+            color: var(--rangoon-green);
         }
 
         @keyframes slideIn {
@@ -240,7 +338,7 @@
             background: none;
             border: none;
             font-size: 1.5rem;
-            color: var(--primary-color);
+            color: var(--galliano);
             cursor: pointer;
         }
 
@@ -265,7 +363,7 @@
                 top: var(--header-height);
                 left: 0;
                 width: 100%;
-                background: white;
+                background: var(--rangoon-green);
                 flex-direction: column;
                 align-items: center;
                 padding: 1rem 0;
@@ -273,6 +371,7 @@
                 box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
                 transform: translateY(-150%);
                 transition: transform 0.3s ease;
+                border-top: 1px solid var(--antique-bronze);
             }
             
             .nav-menu.active {
@@ -287,10 +386,6 @@
                 width: 90%;
                 justify-content: center;
                 padding: 0.8rem;
-            }
-            
-            .stats-container {
-                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -307,32 +402,31 @@
                 font-size: 1.8rem;
             }
             
-            .stat-value {
-                font-size: 2rem;
-            }
-            
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-            
             .logo-img {
-                height: 35px;
+                height: 38px;
             }
             
             .brand-name {
                 font-size: 1.1rem;
             }
+            
+            .dashboard-card {
+                padding: 1.2rem;
+            }
         }
+
+        
+        
     </style>
 </head>
 
 <body>
     <!-- Header superior -->
-    <header class="main-header">
+       <header class="main-header">
         <div class="header-container">
             <div class="logo-container">
-                <img src="{% static 'vehiculos/img/iconmec.jpg' %}" alt="DeimosCode Logo" class="logo-img">
-                <h1 class="brand-name">DEIMOSCODE</h1>
+                <img src="{% static 'vehiculos/img/iconmec.png' %}" alt="DeimosCode Logo" class="logo-img">
+                
             </div>
             
             <button class="menu-toggle" id="menuToggle">

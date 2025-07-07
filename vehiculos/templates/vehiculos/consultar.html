@@ -13,20 +13,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --dark-color: #1a252f;
-            --light-color: #ecf0f1;
-            --success-color: #28a745;
-            --info-color: #17a2b8;
+            /* Paleta de colores del logo */
+            --rangoon-green: #060605;
+            --quill-gray: #d4d3d0;
+            --galliano: #daa104;
+            --antique-bronze: #6d4c04;
+            
+            /* Estructura de colores */
+            --primary-color: var(--rangoon-green);
+            --secondary-color: var(--galliano);
+            --accent-color: var(--antique-bronze);
+            --light-color: var(--quill-gray);
+            --dark-color: #121212;
             --header-height: 70px;
         }
-
+        
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, var(--dark-color) 0%, var(--primary-color) 100%);
-            color: #333;
+            background: var(--dark-color);
+            color: var(--quill-gray);
             margin: 0;
             padding: 0;
             padding-top: var(--header-height);
@@ -40,8 +45,8 @@
             left: 0;
             width: 100%;
             height: var(--header-height);
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            background: var(--rangoon-green);
+            box-shadow: 0 2px 15px rgba(218, 161, 4, 0.2);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -58,24 +63,30 @@
         }
 
         .logo-container {
-            display: flex;
+            position: relative;
+            display: inline-flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 12px;
+            padding: 8px 15px;
         }
 
         .logo-img {
-            height: 40px;
-            width: auto;
-            border-radius: 50%;
-            border: 2px solid var(--secondary-color);
+            height: 45px;
+            filter: 
+                drop-shadow(0 0 6px rgba(218, 161, 4, 0.7)) /* Sombra dorada exterior */
+                drop-shadow(0 0 12px rgba(218, 161, 4, 0.4)); /* Efecto glow */
+            transition: all 0.3s ease;
         }
 
         .brand-name {
-            color: var(--primary-color);
-            font-weight: 700;
-            font-size: 1.3rem;
-            margin: 0;
-            white-space: nowrap;
+            color: var(--rangoon-green);
+            font-weight: 800;
+            text-shadow: 
+                0 0 8px var(--galliano), /* Sombra dorada */
+                0 0 12px rgba(212, 211, 208, 0.5), /* Efecto neón */
+                1px 1px 0px rgba(0,0,0,0.3); /* Sombra tradicional para profundidad */
+            position: relative;
+            z-index: 1;
         }
 
         .nav-menu {
@@ -87,9 +98,9 @@
         .nav-button {
             position: relative;
             padding: 0.5rem 1.2rem;
-            background: white;
-            color: var(--primary-color);
-            border: 2px solid var(--secondary-color);
+            background: var(--rangoon-green);
+            color: var(--galliano);
+            border: 2px solid var(--galliano);
             border-radius: 6px;
             font-weight: 600;
             text-transform: uppercase;
@@ -105,10 +116,10 @@
         }
 
         .nav-button:hover {
-            background: var(--secondary-color);
-            color: white;
+            background: var(--galliano) !important;
+            color: var(--rangoon-green) !important;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 4px 8px rgba(218, 161, 4, 0.3);
         }
 
         .nav-button i {
@@ -117,15 +128,16 @@
 
         /* Contenedor principal */
         .dashboard-container {
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(6, 6, 5, 0.95);
             border-radius: 15px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(218, 161, 4, 0.1);
+            padding: 2.5rem;
             width: 100%;
             max-width: 1200px;
             margin: 2rem auto;
             position: relative;
             overflow: hidden;
+            border: 1px solid var(--antique-bronze);
         }
 
         .dashboard-container::before {
@@ -135,7 +147,7 @@
             left: 0;
             width: 8px;
             height: 100%;
-            background: linear-gradient(to bottom, var(--secondary-color), var(--accent-color));
+            background: linear-gradient(to bottom, var(--galliano), var(--antique-bronze));
         }
 
         .dashboard-header {
@@ -145,15 +157,17 @@
         }
 
         .dashboard-header h1 {
-            color: var(--primary-color);
+            color: var(--galliano);
             font-weight: 700;
             font-size: clamp(1.8rem, 4vw, 2.2rem);
             margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .dashboard-header p {
-            color: #7f8c8d;
+            color: var(--quill-gray);
             font-size: clamp(0.9rem, 2vw, 1rem);
+            opacity: 0.8;
         }
 
         /* Sección de escaneo */
@@ -164,8 +178,8 @@
         }
 
         .btn-scan {
-            background-color: var(--success-color);
-            color: white;
+            background-color: var(--galliano);
+            color: var(--rangoon-green);
             border: none;
             border-radius: 8px;
             padding: 0.75rem 1.5rem;
@@ -179,25 +193,41 @@
         }
 
         .btn-scan:hover {
-            background-color: #218838;
+            background-color: #e0b115;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(218, 161, 4, 0.4);
         }
 
         /* Formulario de búsqueda */
         .form-control {
+            background-color: rgba(6, 6, 5, 0.8);
+            border: 1px solid var(--antique-bronze);
+            color: var(--quill-gray);
             border-radius: 8px;
             padding: 0.75rem 1.25rem;
             font-size: clamp(0.9rem, 2vw, 1rem);
         }
 
+        .form-control:focus {
+            background-color: rgba(6, 6, 5, 0.9);
+            border-color: var(--galliano);
+            color: var(--quill-gray);
+            box-shadow: 0 0 0 0.25rem rgba(218, 161, 4, 0.25);
+        }
+
         .btn-search {
-            background-color: var(--secondary-color);
-            color: white;
+            background-color: var(--galliano);
+            color: var(--rangoon-green);
             border-radius: 8px;
             padding: 0.75rem 1.5rem;
             font-weight: 600;
             width: 100%;
             font-size: clamp(0.9rem, 2vw, 1rem);
+            border: none;
+        }
+
+        .btn-search:hover {
+            background-color: #e0b115;
         }
 
         /* QR Code */
@@ -206,14 +236,15 @@
             top: 20px;
             left: 20px;
             width: 100px;
-            background: white;
+            background: rgba(6, 6, 5, 0.9);
             padding: 0.4rem 0.5rem;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(218, 161, 4, 0.3);
             text-align: center;
             font-size: 0.75rem;
             z-index: 10;
             user-select: none;
+            border: 1px solid var(--galliano);
         }
 
         .qr-fixed img {
@@ -230,11 +261,15 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--quill-gray);
         }
 
         .btn-print {
             font-size: 0.75rem;
             padding: 0.25rem 0.5rem;
+            background-color: var(--antique-bronze);
+            color: var(--quill-gray);
+            border: none;
         }
 
         /* Tabla de información */
@@ -251,20 +286,21 @@
         }
 
         .info-table th {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--antique-bronze);
+            color: var(--quill-gray);
             padding: 1rem;
         }
 
         .info-table td {
             padding: 1rem;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid rgba(109, 76, 4, 0.3);
+            background-color: rgba(6, 6, 5, 0.7);
         }
 
         /* Tarjetas de observaciones */
         .observacion-card {
-            background: #f9f9f9;
-            border: 1px solid #ddd;
+            background: rgba(6, 6, 5, 0.8);
+            border: 1px solid var(--antique-bronze);
             border-radius: 10px;
             padding: 1rem;
             margin-bottom: 1rem;
@@ -276,24 +312,38 @@
             cursor: pointer;
             border-radius: 6px;
             transition: transform 0.3s;
+            border: 1px solid var(--galliano);
         }
 
         .observacion-img:hover {
             transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(218, 161, 4, 0.4);
         }
 
         /* Alertas */
         .alert-notification {
             position: fixed;
             top: calc(var(--header-height) + 20px);
-            left: 50%;
-            transform: translateX(-50%);
+            right: 20px;
             z-index: 1100;
             border-radius: 6px;
             box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-            max-width: 90%;
-            width: min(400px, 90vw);
-            font-size: clamp(0.85rem, 2vw, 0.9rem);
+            max-width: 350px;
+            background: var(--rangoon-green);
+            border: 1px solid var(--galliano);
+            color: var(--quill-gray);
+            animation: slideIn 0.5s forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         /* Modal de imagen */
@@ -321,6 +371,7 @@
             margin: 0 auto;
             display: block;
             border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
         
         .image-modal .btn-close {
@@ -348,6 +399,7 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid var(--galliano);
         }
 
         /* Menú hamburguesa para móviles */
@@ -356,7 +408,7 @@
             background: none;
             border: none;
             font-size: 1.5rem;
-            color: var(--primary-color);
+            color: var(--galliano);
             cursor: pointer;
         }
 
@@ -367,7 +419,87 @@
             border-radius: 6px;
             margin-right: 5px;
             margin-bottom: 5px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--galliano);
+        }
+
+        /* Efecto hover dinámico para el logo */
+        .logo-container:hover .logo-img {
+            filter: 
+                drop-shadow(0 0 10px rgba(218, 161, 4, 0.9))
+                drop-shadow(0 0 20px rgba(218, 161, 4, 0.6));
+        }
+
+            .modal-content {
+        background-color: var(--rangoon-green);
+        border: 1px solid var(--galliano);
+        color: var(--quill-gray);
+        border-radius: 10px;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--antique-bronze);
+            padding: 1rem 1.5rem;
+        }
+
+        .modal-title {
+            color: var(--galliano);
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--antique-bronze);
+            padding: 1rem 1.5rem;
+        }
+
+        /* Estilos para los botones del modal */
+        .modal-footer .btn-secondary {
+            background-color: var(--antique-bronze);
+            color: var(--quill-gray);
+            border: none;
+        }
+
+        .modal-footer .btn-success {
+            background-color: var(--galliano);
+            color: var(--rangoon-green);
+            border: none;
+            font-weight: 600;
+        }
+
+        /* Estilos para los inputs en el modal */
+        .modal-content .form-control {
+            background-color: rgba(6, 6, 5, 0.8);
+            border: 1px solid var(--antique-bronze);
+            color: white;
+            font-weight: 500;
+        }
+
+        .modal-content .form-control:focus {
+            border-color: var(--galliano);
+            box-shadow: 0 0 0 0.25rem rgba(218, 161, 4, 0.25);
+        }
+
+        /* Estilos para el textarea */
+        .modal-content textarea.form-control {
+            min-height: 120px;
+            background-color: rgba(6, 6, 5, 0.8);
+            color: white;
+        }
+
+        /* Estilos para los botones de cámara */
+        #btnTomarFoto, #btnTomarFotoFrontal {
+            background-color: var(--antique-bronze);
+            color: var(--quill-gray);
+            border: none;
+            transition: all 0.3s;
+        }
+
+        #btnTomarFoto:hover, #btnTomarFotoFrontal:hover {
+            background-color: var(--galliano);
+            color: var(--rangoon-green);
         }
 
         /* Responsive Design */
@@ -383,7 +515,7 @@
                 top: var(--header-height);
                 left: 0;
                 width: 100%;
-                background: white;
+                background: var(--rangoon-green);
                 flex-direction: column;
                 align-items: center;
                 padding: 1rem 0;
@@ -391,6 +523,7 @@
                 box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
                 transform: translateY(-150%);
                 transition: transform 0.3s ease;
+                border-top: 1px solid var(--antique-bronze);
             }
             
             .nav-menu.active {
@@ -430,11 +563,7 @@
             }
             
             .logo-img {
-                height: 35px;
-            }
-            
-            .brand-name {
-                font-size: 1.1rem;
+                height: 38px;
             }
             
             .btn-scan, .btn-search {
@@ -461,6 +590,11 @@
                 max-width: 100px;
             }
         }
+        .text-muted {
+            color: white !important;
+            opacity: 0.8; /* Mantiene la opacidad que ya tenías */
+        }
+        
     </style>
 </head>
 
@@ -469,8 +603,7 @@
     <header class="main-header">
         <div class="header-container">
             <div class="logo-container">
-                <img src="{% static 'vehiculos/img/iconmec.jpg' %}" alt="DeimosCode Logo" class="logo-img">
-                <h1 class="brand-name">DEIMOSCODE</h1>
+                <img src="{% static 'vehiculos/img/iconmec.png' %}" alt="DeimosCode Logo" class="logo-img">
             </div>
             
             <button class="menu-toggle" id="menuToggle">
@@ -482,7 +615,7 @@
                     <i class="fas fa-home"></i> Inicio
                 </a>
                 <a href="{% url 'registrar_vehiculo' %}" class="nav-button">
-                    <i class="fas fa-car"></i> Registrar
+                    <i class="fas fa-car"></i> Registrar Vehículo
                 </a>
                 <a href="{% url 'logout' %}" class="nav-button">
                     <i class="fas fa-sign-out-alt"></i> Salir
@@ -501,9 +634,6 @@
     {% endfor %}
     {% endif %}
 
-    <br>
-    <br>
-    <br>
     <!-- Contenido principal -->
     <div class="dashboard-container">
         {% if vehiculo %}
@@ -551,7 +681,7 @@
             <i class="fas fa-plus-circle"></i> Agregar Observación
         </button>
 
-        <!-- Modal para Observaciones - Versión Mejorada -->
+        <!-- Modal para Observaciones -->
         <div class="modal fade" id="modalObservacion" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <form method="post" enctype="multipart/form-data" action="{% url 'registrar_observacion' vehiculo.codigo %}">
@@ -567,7 +697,6 @@
                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required></textarea>
                             </div>
                             <div class="mb-3">
-                                <!-- Selector de cámara mejorado -->
                                 <div class="btn-group mb-3" role="group">
                                     <button type="button" class="btn btn-info" id="btnTomarFoto" data-camera="environment">
                                         <i class="fas fa-camera-retro"></i> Cámara Trasera
@@ -577,11 +706,9 @@
                                     </button>
                                 </div>
 
-                                <!-- Video para mostrar cámara -->
                                 <video id="video" width="100%" height="auto" autoplay 
                                     style="display:none; border-radius: 8px; margin-bottom:10px;"></video>
                                 
-                                <!-- Botón para capturar -->
                                 <button type="button" class="btn btn-success mb-3" id="btnCapturar" style="display:none;">
                                     <i class="fas fa-camera"></i> Capturar Foto
                                 </button>
@@ -589,10 +716,8 @@
                                     <i class="fas fa-times"></i> Cancelar
                                 </button>
 
-                                <!-- Canvas para capturar foto -->
                                 <canvas id="canvas" style="display:none;"></canvas>
                                 
-                                <!-- Vista previa -->
                                 <div id="fotoPreview" class="mb-3" style="display:none;">
                                     <h6>Vista previa:</h6>
                                     <img id="previewImage" src="#" alt="Vista previa" style="max-width:100%; border-radius:8px;">
@@ -601,16 +726,13 @@
                                     </button>
                                 </div>
 
-                                <!-- Input oculto para imagen tomada en base64 -->
                                 <input type="hidden" id="fotoBase64" name="fotoBase64">
                                 
-                                <!-- Input para subir archivos múltiples -->
                                 <div class="mb-3">
                                     <label class="form-label">O seleccione imágenes de su galería:</label>
                                     <input class="form-control" type="file" id="imagen" name="imagenes[]" accept="image/*" multiple>
                                 </div>
                                 
-                                <!-- Vista previa de imágenes seleccionadas -->
                                 <div id="galeriaPreview" class="d-flex flex-wrap gap-2 mt-3"></div>
                             </div>
                         </div>
@@ -624,7 +746,7 @@
         </div>
 
         <div class="vehicle-info">
-            <h3 style="color: var(--primary-color);">Información del Vehículo</h3>
+            <h3 style="color: var(--galliano);">Información del Vehículo</h3>
             <table class="info-table">
                 <thead>
                     <tr><th>Campo</th><th>Valor</th></tr>
@@ -641,7 +763,7 @@
 
         {% if vehiculo and vehiculo.observaciones.all %}
         <div class="mt-5">
-            <h3 style="color: var(--primary-color);">Observaciones</h3>
+            <h3 style="color: var(--galliano);">Observaciones</h3>
             {% for obs in vehiculo.observaciones.all %}
             <div class="observacion-card">
                 <small class="text-muted">{{ obs.fecha|date:"d/m/Y H:i" }} - {{ obs.creado_por }}</small>
@@ -676,238 +798,225 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
-        // ========== LECTOR QR ==========
-        const html5QrCode = new Html5Qrcode("reader");
-        const scanBtn = document.getElementById('scan-btn');
-        const readerDiv = document.getElementById('reader');
-        const codigoInput = document.getElementById('codigo-input');
-        let isScanning = false;
+        // ========== MENÚ HAMBURGUESA ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
 
-        // Ocultar alertas después de 5 segundos
-        setTimeout(function() {
-            var alerts = document.querySelectorAll('.alert-notification');
-            alerts.forEach(function(alert) {
-                alert.style.transition = 'opacity 0.5s';
-                alert.style.opacity = '0';
-                setTimeout(function() {
-                    alert.remove();
-                }, 500);
-            });
-        }, 5000);
-
-        const qrCodeSuccessCallback = (decodedText) => {
-            codigoInput.value = decodedText;
-            stopScanning();
-            document.getElementById('codigo-form').submit();
-        };
-
-        function startScanning() {
-            codigoInput.value = '';
-            readerDiv.style.display = 'block';
-            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, qrCodeSuccessCallback)
-                .then(() => {
-                    isScanning = true;
-                    scanBtn.innerHTML = '<i class="fas fa-stop"></i> Detener escaneo';
-                })
-                .catch(err => {
-                    console.error("Error al iniciar escáner:", err);
-                    alert("No se pudo iniciar la cámara. Asegúrese de haber dado los permisos necesarios.");
-                });
-        }
-
-        function stopScanning() {
-            html5QrCode.stop().then(() => {
-                isScanning = false;
-                readerDiv.style.display = 'none';
-                scanBtn.innerHTML = '<i class="fas fa-camera"></i> Iniciar escaneo';
-            }).catch(err => {
-                console.error("Error al detener escáner:", err);
-            });
-        }
-
-        scanBtn.addEventListener('click', () => isScanning ? stopScanning() : startScanning());
-
-        function printQRCode() {
-            const qrImage = document.querySelector('.qr-fixed img');
-            const codigo = document.querySelector('.qr-fixed strong').textContent;
-            const win = window.open('', '', 'width=400,height=600');
-            win.document.write(`
-                <html><head><title>QR</title></head><body>
-                <h2>Vehículo: ${codigo}</h2>
-                <img src="${qrImage.src}" style="max-width:100%">
-                </body></html>
-            `);
-            win.document.close();
-            win.print();
-        }
-
-        // ========== MANEJO DE LA CÁMARA ==========
-        const btnTomarFoto = document.getElementById('btnTomarFoto');
-        const btnTomarFotoFrontal = document.getElementById('btnTomarFotoFrontal');
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const btnCapturar = document.getElementById('btnCapturar');
-        const btnCancelarCamara = document.getElementById('btnCancelarCamara');
-        const fotoPreview = document.getElementById('fotoPreview');
-        const previewImage = document.getElementById('previewImage');
-        const btnEliminarFoto = document.getElementById('btnEliminarFoto');
-        const fotoBase64 = document.getElementById('fotoBase64');
-        const inputImagenes = document.getElementById('imagen');
-        const galeriaPreview = document.getElementById('galeriaPreview');
-
-        let stream = null;
-        let currentCamera = 'environment';
-
-        // Función para iniciar la cámara
-        async function iniciarCamara(cameraType) {
-            try {
-                // Detener la cámara actual si está activa
-                if (stream) {
-                    detenerCamara();
-                }
-                
-                currentCamera = cameraType;
-                video.style.display = 'block';
-                btnCapturar.style.display = 'inline-block';
-                btnCancelarCamara.style.display = 'inline-block';
-                
-                // Ocultar botones de selección de cámara
-                btnTomarFoto.style.display = 'none';
-                btnTomarFotoFrontal.style.display = 'none';
-                
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        facingMode: cameraType,
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
+            if (menuToggle && navMenu) {
+                menuToggle.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                    const icon = menuToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.toggle('fa-bars');
+                        icon.classList.toggle('fa-times');
                     }
                 });
-                video.srcObject = stream;
-            } catch (err) {
-                console.error("Error al acceder a la cámara:", err);
-                alert('No se pudo acceder a la cámara. Asegúrese de haber dado los permisos necesarios.');
-                resetCamara();
             }
-        }
 
-        // Función para detener la cámara
-        function detenerCamara() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            video.style.display = 'none';
-            btnCapturar.style.display = 'none';
-            btnCancelarCamara.style.display = 'none';
-        }
+            // ========== LECTOR QR ==========
+            const readerDiv = document.getElementById('reader');
+            if (readerDiv) {
+                const html5QrCode = new Html5Qrcode("reader");
+                const scanBtn = document.getElementById('scan-btn');
+                const codigoInput = document.getElementById('codigo-input');
+                let isScanning = false;
 
-        // Función para resetear el estado de la cámara
-        function resetCamara() {
-            detenerCamara();
-            btnTomarFoto.style.display = 'inline-block';
-            btnTomarFotoFrontal.style.display = 'inline-block';
-            fotoPreview.style.display = 'none';
-            fotoBase64.value = '';
-        }
+                const qrCodeSuccessCallback = (decodedText) => {
+                    if (codigoInput) {
+                        codigoInput.value = decodedText;
+                        stopScanning();
+                        document.getElementById('codigo-form').submit();
+                    }
+                };
 
-        // Evento para tomar foto con cámara trasera
-        btnTomarFoto.addEventListener('click', () => iniciarCamara('environment'));
-
-        // Evento para tomar foto con cámara frontal
-        btnTomarFotoFrontal.addEventListener('click', () => iniciarCamara('user'));
-
-        // Evento para capturar foto
-        btnCapturar.addEventListener('click', function() {
-            // Ajustar canvas al tamaño del video
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            // Dibujar la imagen del video en el canvas
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Obtener la imagen en base64
-            const dataURL = canvas.toDataURL('image/jpeg', 0.8); // 0.8 es la calidad (80%)
-            
-            // Mostrar vista previa
-            previewImage.src = dataURL;
-            fotoPreview.style.display = 'block';
-            
-            // Guardar en el input oculto
-            fotoBase64.value = dataURL;
-            
-            // Detener la cámara
-            detenerCamara();
-            
-            // Mostrar botones de selección de cámara
-            btnTomarFoto.style.display = 'inline-block';
-            btnTomarFotoFrontal.style.display = 'inline-block';
-        });
-
-        // Evento para cancelar captura
-        btnCancelarCamara.addEventListener('click', resetCamara);
-
-        // Evento para eliminar foto capturada
-        btnEliminarFoto.addEventListener('click', function() {
-            fotoPreview.style.display = 'none';
-            fotoBase64.value = '';
-        });
-
-        // ========== VISTA PREVIA DE IMÁGENES SELECCIONADAS ==========
-        inputImagenes.addEventListener('change', function(e) {
-            galeriaPreview.innerHTML = ''; // Limpiar vista previa
-            
-            // Mostrar vista previa de cada imagen seleccionada
-            Array.from(e.target.files).forEach(file => {
-                if (!file.type.match('image.*')) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imgContainer = document.createElement('div');
-                    imgContainer.style.position = 'relative';
-                    imgContainer.style.width = '100px';
-                    
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.maxWidth = '100%';
-                    img.style.borderRadius = '6px';
-                    img.style.marginBottom = '5px';
-                    img.className = 'img-preview';
-                    
-                    imgContainer.appendChild(img);
-                    galeriaPreview.appendChild(imgContainer);
+                function startScanning() {
+                    if (codigoInput) codigoInput.value = '';
+                    readerDiv.style.display = 'block';
+                    html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, qrCodeSuccessCallback)
+                        .then(() => {
+                            isScanning = true;
+                            if (scanBtn) scanBtn.innerHTML = '<i class="fas fa-stop"></i> Detener escaneo';
+                        })
+                        .catch(err => {
+                            console.error("Error al iniciar escáner:", err);
+                            alert("No se pudo iniciar la cámara. Asegúrese de haber dado los permisos necesarios.");
+                        });
                 }
-                reader.readAsDataURL(file);
-            });
-        });
 
-        // ========== MODAL DE IMAGEN ==========
-        function openImageModal(imageSrc) {
-            const modal = new bootstrap.Modal(document.getElementById('imageModal'));
-            const modalImage = document.getElementById('modalImage');
-            modalImage.src = imageSrc;
-            modal.show();
-        }
+                function stopScanning() {
+                    html5QrCode.stop().then(() => {
+                        isScanning = false;
+                        readerDiv.style.display = 'none';
+                        if (scanBtn) scanBtn.innerHTML = '<i class="fas fa-camera"></i> Iniciar escaneo';
+                    }).catch(err => {
+                        console.error("Error al detener escáner:", err);
+                    });
+                }
 
-        // Cerrar modal al hacer clic en la imagen
-        document.getElementById('modalImage').addEventListener('click', function() {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('imageModal'));
-            modal.hide();
-        });
+                if (scanBtn) {
+                    scanBtn.addEventListener('click', () => isScanning ? stopScanning() : startScanning());
+                }
 
-        // ========== MENÚ HAMBURGUESA ==========
-        const menuToggle = document.getElementById('menuToggle');
-        const navMenu = document.getElementById('navMenu');
-        
-        menuToggle.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
-            const icon = menuToggle.querySelector('i');
-            if (navMenu.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
+                // Función para imprimir QR
+                window.printQRCode = function() {
+                    const qrImage = document.querySelector('.qr-fixed img');
+                    const codigo = document.querySelector('.qr-fixed strong').textContent;
+                    if (qrImage && codigo) {
+                        const win = window.open('', '', 'width=400,height=600');
+                        win.document.write(`
+                            <html><head><title>QR</title></head><body>
+                            <h2>Vehículo: ${codigo}</h2>
+                            <img src="${qrImage.src}" style="max-width:100%">
+                            </body></html>
+                        `);
+                        win.document.close();
+                        win.print();
+                    }
+                };
             }
+
+            // ========== MANEJO DE LA CÁMARA ==========
+            const btnTomarFoto = document.getElementById('btnTomarFoto');
+            const btnTomarFotoFrontal = document.getElementById('btnTomarFotoFrontal');
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const btnCapturar = document.getElementById('btnCapturar');
+            const btnCancelarCamara = document.getElementById('btnCancelarCamara');
+            const fotoPreview = document.getElementById('fotoPreview');
+            const previewImage = document.getElementById('previewImage');
+            const btnEliminarFoto = document.getElementById('btnEliminarFoto');
+            const fotoBase64 = document.getElementById('fotoBase64');
+            const inputImagenes = document.getElementById('imagen');
+            const galeriaPreview = document.getElementById('galeriaPreview');
+
+            if (btnTomarFoto && btnTomarFotoFrontal && video && canvas && btnCapturar && 
+                btnCancelarCamara && fotoPreview && previewImage && btnEliminarFoto && 
+                fotoBase64 && inputImagenes && galeriaPreview) {
+                
+                let stream = null;
+                let currentCamera = 'environment';
+
+                async function iniciarCamara(cameraType) {
+                    try {
+                        if (stream) detenerCamara();
+                        
+                        currentCamera = cameraType;
+                        video.style.display = 'block';
+                        btnCapturar.style.display = 'inline-block';
+                        btnCancelarCamara.style.display = 'inline-block';
+                        
+                        btnTomarFoto.style.display = 'none';
+                        btnTomarFotoFrontal.style.display = 'none';
+                        
+                        stream = await navigator.mediaDevices.getUserMedia({
+                            video: { 
+                                facingMode: cameraType,
+                                width: { ideal: 1280 },
+                                height: { ideal: 720 }
+                            }
+                        });
+                        video.srcObject = stream;
+                    } catch (err) {
+                        console.error("Error al acceder a la cámara:", err);
+                        alert('No se pudo acceder a la cámara. Asegúrese de haber dado los permisos necesarios.');
+                        resetCamara();
+                    }
+                }
+
+                function detenerCamara() {
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                        stream = null;
+                    }
+                    video.style.display = 'none';
+                    btnCapturar.style.display = 'none';
+                    btnCancelarCamara.style.display = 'none';
+                }
+
+                function resetCamara() {
+                    detenerCamara();
+                    btnTomarFoto.style.display = 'inline-block';
+                    btnTomarFotoFrontal.style.display = 'inline-block';
+                    fotoPreview.style.display = 'none';
+                    fotoBase64.value = '';
+                }
+
+                btnTomarFoto.addEventListener('click', () => iniciarCamara('environment'));
+                btnTomarFotoFrontal.addEventListener('click', () => iniciarCamara('user'));
+
+                btnCapturar.addEventListener('click', function() {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    
+                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    previewImage.src = dataURL;
+                    fotoPreview.style.display = 'block';
+                    fotoBase64.value = dataURL;
+                    
+                    detenerCamara();
+                    btnTomarFoto.style.display = 'inline-block';
+                    btnTomarFotoFrontal.style.display = 'inline-block';
+                });
+
+                btnCancelarCamara.addEventListener('click', resetCamara);
+                btnEliminarFoto.addEventListener('click', function() {
+                    fotoPreview.style.display = 'none';
+                    fotoBase64.value = '';
+                });
+
+                inputImagenes.addEventListener('change', function(e) {
+                    galeriaPreview.innerHTML = '';
+                    
+                    Array.from(e.target.files).forEach(file => {
+                        if (!file.type.match('image.*')) return;
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const imgContainer = document.createElement('div');
+                            imgContainer.style.position = 'relative';
+                            imgContainer.style.width = '100px';
+                            
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.maxWidth = '100%';
+                            img.style.borderRadius = '6px';
+                            img.style.marginBottom = '5px';
+                            img.className = 'img-preview';
+                            
+                            imgContainer.appendChild(img);
+                            galeriaPreview.appendChild(imgContainer);
+                        }
+                        reader.readAsDataURL(file);
+                    });
+                });
+            }
+
+            // ========== MODAL DE IMAGEN ==========
+            window.openImageModal = function(imageSrc) {
+                const modalElement = document.getElementById('imageModal');
+                const modalImage = document.getElementById('modalImage');
+                if (modalElement && modalImage) {
+                    modalImage.src = imageSrc;
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                }
+            };
+
+            // Ocultar alertas después de 5 segundos
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert-notification');
+                alerts.forEach(function(alert) {
+                    alert.style.transition = 'opacity 0.5s';
+                    alert.style.opacity = '0';
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500);
+                });
+            }, 5000);
         });
     </script>
 </body>

@@ -15,34 +15,63 @@
     
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
+            /* Paleta de colores del logo */
+            --rangoon-green: #060605;
+            --quill-gray: #d4d3d0;
+            --galliano: #daa104;
+            --antique-bronze: #6d4c04;
+            
+            /* Estructura de colores */
+            --primary-color: var(--rangoon-green);
+            --secondary-color: var(--galliano);
+            --accent-color: var(--antique-bronze);
+            --light-color: var(--quill-gray);
+            --dark-color: #121212;
         }
         
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #1e2a3a 0%, #2c3e50 100%);
+            background: var(--dark-color);
             min-height: 100vh;
             display: flex;
             align-items: center;
             overflow-x: hidden;
+            color: var(--quill-gray);
+            margin: 0;
+        }
+
+        /* Fondo animado de partículas */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            background-color: var(--dark-color);
         }
 
         .login-container {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(6, 6, 5, 0.95);
             padding: 2.5rem;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(218, 161, 4, 0.1);
             width: 100%;
             max-width: 420px;
             margin: 2rem auto;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--antique-bronze);
             position: relative;
             z-index: 10;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--galliano), var(--antique-bronze));
         }
 
         .logo-container {
@@ -52,59 +81,68 @@
         }
 
         .logo {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 3px solid var(--secondary-color);
-            padding: 3px;
-            background: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            height: 80px; /* Tamaño ajustado para logo rectangular */
+            width: auto;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px rgba(218, 161, 4, 0.5));
             transition: all 0.3s ease;
         }
 
         .logo:hover {
             transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+            filter: drop-shadow(0 0 15px rgba(218, 161, 4, 0.7));
         }
 
         .brand-name {
-            color: var(--primary-color);
+            color: var(--galliano);
             font-weight: 700;
             font-size: 1.8rem;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
             text-align: center;
             letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(218, 161, 4, 0.5);
         }
 
         .brand-subtitle {
-            color: var(--secondary-color);
+            color: var(--quill-gray);
             font-weight: 400;
             font-size: 0.9rem;
             text-align: center;
             margin-bottom: 2rem;
             letter-spacing: 0.5px;
+            opacity: 0.8;
         }
 
         .form-floating label {
-            color: #7f8c8d;
+            color: var(--quill-gray);
             font-weight: 500;
+            opacity: 0.8;
         }
 
         .form-control {
+            background-color: rgba(6, 6, 5, 0.8);
+            border: 1px solid var(--antique-bronze);
+            color: white;
             border-radius: 8px;
             padding: 1rem 1.25rem;
-            border: 1px solid #dfe6e9;
             transition: all 0.3s;
+            font-weight: 500;
         }
 
         .form-control:focus {
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+            background-color: rgba(6, 6, 5, 0.9);
+            border-color: var(--galliano);
+            color: white;
+            box-shadow: 0 0 0 0.25rem rgba(218, 161, 4, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .btn-login {
-            background-color: var(--secondary-color);
+            background-color: var(--galliano);
+            color: var(--rangoon-green);
             border: none;
             border-radius: 8px;
             padding: 0.75rem;
@@ -116,9 +154,9 @@
         }
 
         .btn-login:hover {
-            background-color: #2980b9;
+            background-color: #e0b115;
             transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 12px rgba(218, 161, 4, 0.2);
         }
 
         .btn-login:active {
@@ -126,30 +164,21 @@
         }
 
         .footer-text {
-            color: #7f8c8d;
+            color: var(--quill-gray);
             font-size: 0.8rem;
             text-align: center;
             margin-top: 1.5rem;
+            opacity: 0.7;
         }
 
         .footer-text a {
-            color: var(--secondary-color);
+            color: var(--galliano);
             text-decoration: none;
             font-weight: 500;
         }
 
         .footer-text a:hover {
             text-decoration: underline;
-        }
-
-        /* Efecto de partículas */
-        #particles-js {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1;
         }
 
         /* Alertas */
@@ -162,6 +191,9 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             animation: slideIn 0.5s forwards;
             max-width: 350px;
+            background: var(--rangoon-green);
+            border: 1px solid var(--galliano);
+            color: var(--quill-gray);
         }
 
         @keyframes slideIn {
@@ -183,7 +215,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 1050;
             justify-content: center;
             align-items: center;
@@ -192,13 +224,15 @@
         .spinner-border {
             width: 3rem;
             height: 3rem;
-            color: var(--secondary-color);
+            color: var(--galliano);
         }
 
         /* Input con iconos */
         .input-group-text {
-            background-color: transparent;
+            background-color: rgba(6, 6, 5, 0.8);
+            border: 1px solid var(--antique-bronze);
             border-right: none;
+            color: var(--galliano);
         }
 
         .input-with-icon {
@@ -215,13 +249,11 @@
             }
             
             .logo {
-                width: 80px;
-                height: 80px;
+                height: 60px;
             }
             
             .brand-name {
                 font-size: 1.4rem;
-                margin-top: 0.8rem;
             }
             
             .brand-subtitle {
@@ -262,39 +294,12 @@
                 font-size: 0.85rem;
             }
         }
-
-        /* Asegurar que los inputs no excedan el ancho en móviles */
-        .input-group {
-            width: 100%;
-        }
-        
-        /* Mejorar el espaciado en móviles */
-        .form-floating {
-            margin-bottom: 1rem;
-        }
     </style>
 </head>
 
 <body>
-    <!-- Partículas -->
+    <!-- Fondo animado de partículas -->
     <div id="particles-js"></div>
-
-    <!-- Alertas -->
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        <strong>{{ message.tags|title }}!</strong> {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-    {% endif %}
-
-    <!-- Spinner -->
-    <div class="spinner-container" id="spinner">
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Cargando...</span>
-        </div>
-    </div>
 
     <!-- Contenedor de Login -->
     <div class="container">
@@ -303,10 +308,19 @@
                 <div class="login-container">
                     <!-- Logo y marca -->
                     <div class="logo-container">
-                        <img src="{% static 'vehiculos/img/iconmec.jpg' %}" alt="DeimosCode Logo" class="logo" />
-                        <h1 class="brand-name">DEIMOSCODE</h1>
+                        <img src="{% static 'vehiculos/img/iconmec.png' %}" alt="DeimosCode Logo" class="logo" />
                         <p class="brand-subtitle">Sistema de Gestión de Taller</p>
                     </div>
+
+                    <!-- Alertas -->
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <strong>{{ message.tags|title }}!</strong> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
 
                     <!-- Formulario -->
                     <form method="post" id="loginForm">
@@ -317,7 +331,6 @@
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                                 <input type="text" class="form-control input-with-icon" id="username" name="username" 
                                        placeholder="Usuario" required />
-                                
                             </div>
                         </div>
                         
@@ -326,23 +339,29 @@
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                 <input type="password" class="form-control input-with-icon" id="password" 
                                        name="password" placeholder="Contraseña" required />
-                               
                             </div>
                         </div>
                         
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-login btn-primary">
+                            <button type="submit" class="btn btn-login">
                                 <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
                             </button>
                         </div>
                     </form>
 
                     <p class="footer-text">
-                        © 2023 DeimosCode. Todos los derechos reservados.<br>
-                        <a href="#">Términos de servicio</a> | <a href="#">Política de privacidad</a>
+                        © 2025 DeimosCode. Todos los derechos reservados.<br>
+                        
                     </p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Spinner -->
+    <div class="spinner-container" id="spinner">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Cargando...</span>
         </div>
     </div>
 
@@ -355,78 +374,76 @@
     <script>
         // Inicializar partículas
         document.addEventListener('DOMContentLoaded', function() {
-            if (document.getElementById('particles-js')) {
-                particlesJS('particles-js', {
-                    "particles": {
-                        "number": {
-                            "value": 60,
-                            "density": {
-                                "enable": true,
-                                "value_area": 800
-                            }
-                        },
-                        "color": {
-                            "value": "#3498db"
-                        },
-                        "shape": {
-                            "type": "circle",
-                            "stroke": {
-                                "width": 0,
-                                "color": "#000000"
-                            }
-                        },
-                        "opacity": {
-                            "value": 0.5,
-                            "random": false
-                        },
-                        "size": {
-                            "value": 3,
-                            "random": true
-                        },
-                        "line_linked": {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 60,
+                        "density": {
                             "enable": true,
-                            "distance": 150,
-                            "color": "#3498db",
-                            "opacity": 0.4,
-                            "width": 1
-                        },
-                        "move": {
-                            "enable": true,
-                            "speed": 2,
-                            "direction": "none",
-                            "random": false,
-                            "straight": false,
-                            "out_mode": "out"
+                            "value_area": 800
                         }
                     },
-                    "interactivity": {
-                        "detect_on": "window",
-                        "events": {
-                            "onhover": {
-                                "enable": true,
-                                "mode": "grab"
-                            },
-                            "onclick": {
-                                "enable": true,
-                                "mode": "push"
-                            },
-                            "resize": true
-                        },
-                        "modes": {
-                            "grab": {
-                                "distance": 140,
-                                "line_linked": {
-                                    "opacity": 1
-                                }
-                            },
-                            "push": {
-                                "particles_nb": 4
-                            }
+                    "color": {
+                        "value": "#daa104" // Color dorado que coincide con tu paleta
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
                         }
                     },
-                    "retina_detect": true
-                });
-            }
+                    "opacity": {
+                        "value": 0.5,
+                        "random": false
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#daa104", // Color dorado
+                        "opacity": 0.3, // Más transparente
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out"
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "window",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 0.5
+                            }
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
         });
 
         // Mostrar spinner al enviar formulario
@@ -447,5 +464,4 @@
         }, 5000);
     </script>
 </body>
-
 </html>
