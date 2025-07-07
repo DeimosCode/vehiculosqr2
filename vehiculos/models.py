@@ -9,7 +9,7 @@ class Vehiculo(models.Model):
     codigo = models.CharField(max_length=100, unique=True)
     marca = models.CharField(max_length=50)
     modelo = models.CharField(max_length=50)
-    anio = models.IntegerField()
+    anio = models.IntegerField(null=True, blank=True, verbose_name="Año")
     fecha_registro = models.DateTimeField(default=timezone.now, verbose_name="Fecha de registro")
 
     def __str__(self):

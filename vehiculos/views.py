@@ -9,8 +9,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.urls import reverse
-from django.utils import timezone
-
+from django.utils import timezone 
+from datetime import datetime
 from .models import Vehiculo, ObservacionVehiculo, ImagenObservacion
 
 
@@ -19,22 +19,38 @@ def registrar_vehiculo(request):
         codigo = request.POST.get('codigo')
         marca = request.POST.get('marca')
         modelo = request.POST.get('modelo')
-        anio = request.POST.get('anio')
+        anio = request.POST.get('anio')  # Este puede ser None/empty
         
-
-        # Validar que los campos no estén vacíos
-        if not codigo or not marca or not modelo or not anio:
-            messages.error(request, 'Todos los campos son obligatorios.')
+        # Validar solo los campos obligatorios
+        if not codigo or not marca or not modelo:
+            messages.error(request, 'Los campos código, marca y modelo son obligatorios.')
             return render(request, 'vehiculos/registrar_vehiculo.html', {'MEDIA_URL': settings.MEDIA_URL})
 
-        # Crear y guardar el objeto Vehiculo
+        # Convertir año a entero si tiene valor, sino guardar como None
+        try:
+            anio = int(anio) if anio else None
+        except ValueError:
+            messages.error(request, 'El año debe ser un número válido.')
+            return render(request, 'vehiculos/registrar_vehiculo.html', {'MEDIA_URL': settings.MEDIA_URL})
+
+        # Validación adicional opcional para el año
+        if anio is not None:
+            current_year = datetime.now().year
+            if anio < 1900 or anio > current_year + 1:
+                messages.error(request, f'El año debe estar entre 1900 y {current_year + 1}')
+                return render(request, 'vehiculos/registrar_vehiculo.html', {'MEDIA_URL': settings.MEDIA_URL})
+
+        # Crear y guardar el objeto Vehiculo (anio puede ser None)
         vehiculo = Vehiculo(codigo=codigo, marca=marca, modelo=modelo, anio=anio)
         vehiculo.save()
 
         messages.success(request, 'Vehículo registrado exitosamente.')
         return redirect('home')
 
-    return render(request, 'vehiculos/registrar_vehiculo.html', {'MEDIA_URL': settings.MEDIA_URL})
+    return render(request, 'vehiculos/registrar_vehiculo.html', {
+        'MEDIA_URL': settings.MEDIA_URL,
+        'current_year': datetime.now().year  # Para usar en el template
+    })
 
 
 def consultar_vehiculo(request):
